@@ -73,6 +73,7 @@ final class PurchaseController extends ApiController
     public function update(UpdatePurchaseRequest $request, Purchase $purchase): JsonResponse
     {
         $purchase->update($request->validated());
+        $purchase->load(['supplier', 'items.product']);
 
         return $this->success(new PurchaseResource($purchase));
     }
