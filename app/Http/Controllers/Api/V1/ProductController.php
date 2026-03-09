@@ -14,17 +14,38 @@ use Illuminate\Http\Request;
 
 final class ProductController extends ApiController
 {
+    /**
+     * List products.
+     *
+     * Returns a paginated list of products with their category and unit. Supports search and filtering.
+     *
+     * @queryParam search string Search by name, SKU, or description. Example: Mie Goreng
+     * @queryParam category_id integer Filter by category ID. Example: 1
+     * @queryParam is_active boolean Filter by active status (true/false). Example: true
+     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
+     * @queryParam page integer Page number. Example: 1
+     */
     public function index(Request $request): JsonResponse
     {
+        $perPage = min($request->integer('per_page', 15), 100);
+
         $products = Product::query()
             ->with(['category', 'unit'])
+            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
+                ->orWhere('sku', 'like', "%{$request->search}%")
+                ->orWhere('description', 'like', "%{$request->search}%"))
             ->when($request->category_id, fn ($q) => $q->where('category_id', $request->category_id))
             ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
-            ->paginate(15);
+            ->paginate($perPage);
 
         return $this->success(ProductResource::collection($products)->toResponse($request)->getData(true));
     }
 
+    /**
+     * Create a product.
+     *
+     * Stores a new product.
+     */
     public function store(StoreProductRequest $request): JsonResponse
     {
         $product = Product::query()->create($request->validated());
@@ -33,6 +54,11 @@ final class ProductController extends ApiController
         return $this->created(new ProductResource($product));
     }
 
+    /**
+     * Get a product.
+     *
+     * Returns the details of a specific product including category and unit.
+     */
     public function show(Product $product): JsonResponse
     {
         $product->load(['category', 'unit']);
@@ -40,6 +66,11 @@ final class ProductController extends ApiController
         return $this->success(new ProductResource($product));
     }
 
+    /**
+     * Update a product.
+     *
+     * Updates the specified product.
+     */
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
         $product->update($request->validated());
@@ -48,6 +79,11 @@ final class ProductController extends ApiController
         return $this->success(new ProductResource($product));
     }
 
+    /**
+     * Delete a product.
+     *
+     * Permanently deletes the specified product.
+     */
     public function destroy(Product $product): JsonResponse
     {
         $product->delete();

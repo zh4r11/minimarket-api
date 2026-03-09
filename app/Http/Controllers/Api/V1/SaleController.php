@@ -16,15 +16,38 @@ use Illuminate\Support\Facades\DB;
 
 final class SaleController extends ApiController
 {
+    /**
+     * List sales.
+     *
+     * Returns a paginated list of sales transactions with cashier and items. Supports search and filtering.
+     *
+     * @queryParam search string Search by invoice number or notes. Example: INV-2025
+     * @queryParam status string Filter by status (draft, completed, cancelled). Example: completed
+     * @queryParam payment_method string Filter by payment method (cash, transfer, qris). Example: cash
+     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
+     * @queryParam page integer Page number. Example: 1
+     */
     public function index(Request $request): JsonResponse
     {
+        $perPage = min($request->integer('per_page', 15), 100);
+
         $sales = Sale::query()
             ->with(['cashier', 'items.product'])
-            ->paginate(15);
+            ->when($request->search, fn ($q) => $q->where('invoice_number', 'like', "%{$request->search}%")
+                ->orWhere('notes', 'like', "%{$request->search}%"))
+            ->when($request->status, fn ($q) => $q->where('status', $request->status))
+            ->when($request->payment_method, fn ($q) => $q->where('payment_method', $request->payment_method))
+            ->paginate($perPage);
 
         return $this->success(SaleResource::collection($sales)->toResponse($request)->getData(true));
     }
 
+    /**
+     * Create a sale.
+     *
+     * Stores a new sales transaction along with its items.
+     * Total amount, change amount, and subtotals are calculated automatically.
+     */
     public function store(StoreSaleRequest $request): JsonResponse
     {
         $sale = DB::transaction(function () use ($request): Sale {
@@ -79,6 +102,11 @@ final class SaleController extends ApiController
         return $this->created(new SaleResource($sale));
     }
 
+    /**
+     * Get a sale.
+     *
+     * Returns the details of a specific sale transaction including cashier and items.
+     */
     public function show(Sale $sale): JsonResponse
     {
         $sale->load(['cashier', 'items.product']);
@@ -86,6 +114,11 @@ final class SaleController extends ApiController
         return $this->success(new SaleResource($sale));
     }
 
+    /**
+     * Update a sale.
+     *
+     * Updates the header fields of the specified sale transaction.
+     */
     public function update(UpdateSaleRequest $request, Sale $sale): JsonResponse
     {
         $sale->update($request->validated());
@@ -93,6 +126,11 @@ final class SaleController extends ApiController
         return $this->success(new SaleResource($sale));
     }
 
+    /**
+     * Delete a sale.
+     *
+     * Permanently deletes the specified sale transaction.
+     */
     public function destroy(Sale $sale): JsonResponse
     {
         $sale->delete();

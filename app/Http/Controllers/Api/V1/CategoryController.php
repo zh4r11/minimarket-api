@@ -15,13 +15,32 @@ use Illuminate\Support\Str;
 
 final class CategoryController extends ApiController
 {
+    /**
+     * List categories.
+     *
+     * Returns a paginated list of categories. Supports filtering by keyword.
+     *
+     * @queryParam search string Search by name or description. Example: Minuman
+     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
+     * @queryParam page integer Page number. Example: 1
+     */
     public function index(Request $request): JsonResponse
     {
-        $categories = Category::query()->paginate(15);
+        $perPage = min($request->integer('per_page', 15), 100);
+
+        $categories = Category::query()
+            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
+                ->orWhere('description', 'like', "%{$request->search}%"))
+            ->paginate($perPage);
 
         return $this->success(CategoryResource::collection($categories)->toResponse($request)->getData(true));
     }
 
+    /**
+     * Create a category.
+     *
+     * Stores a new category. The slug is automatically generated from the name.
+     */
     public function store(StoreCategoryRequest $request): JsonResponse
     {
         $category = Category::query()->create([
@@ -32,11 +51,21 @@ final class CategoryController extends ApiController
         return $this->created(new CategoryResource($category));
     }
 
+    /**
+     * Get a category.
+     *
+     * Returns the details of a specific category by ID.
+     */
     public function show(Category $category): JsonResponse
     {
         return $this->success(new CategoryResource($category));
     }
 
+    /**
+     * Update a category.
+     *
+     * Updates the specified category. The slug is automatically regenerated if the name changes.
+     */
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
         $data = $request->validated();
@@ -50,6 +79,11 @@ final class CategoryController extends ApiController
         return $this->success(new CategoryResource($category));
     }
 
+    /**
+     * Delete a category.
+     *
+     * Permanently deletes the specified category.
+     */
     public function destroy(Category $category): JsonResponse
     {
         $category->delete();

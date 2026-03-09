@@ -14,13 +14,32 @@ use Illuminate\Http\Request;
 
 final class UnitController extends ApiController
 {
+    /**
+     * List units.
+     *
+     * Returns a paginated list of units of measure. Supports filtering by keyword.
+     *
+     * @queryParam search string Search by name or symbol. Example: kg
+     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
+     * @queryParam page integer Page number. Example: 1
+     */
     public function index(Request $request): JsonResponse
     {
-        $units = Unit::query()->paginate(15);
+        $perPage = min($request->integer('per_page', 15), 100);
+
+        $units = Unit::query()
+            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
+                ->orWhere('symbol', 'like', "%{$request->search}%"))
+            ->paginate($perPage);
 
         return $this->success(UnitResource::collection($units)->toResponse($request)->getData(true));
     }
 
+    /**
+     * Create a unit.
+     *
+     * Stores a new unit of measure.
+     */
     public function store(StoreUnitRequest $request): JsonResponse
     {
         $unit = Unit::query()->create($request->validated());
@@ -28,11 +47,21 @@ final class UnitController extends ApiController
         return $this->created(new UnitResource($unit));
     }
 
+    /**
+     * Get a unit.
+     *
+     * Returns the details of a specific unit of measure by ID.
+     */
     public function show(Unit $unit): JsonResponse
     {
         return $this->success(new UnitResource($unit));
     }
 
+    /**
+     * Update a unit.
+     *
+     * Updates the specified unit of measure.
+     */
     public function update(UpdateUnitRequest $request, Unit $unit): JsonResponse
     {
         $unit->update($request->validated());
@@ -40,6 +69,11 @@ final class UnitController extends ApiController
         return $this->success(new UnitResource($unit));
     }
 
+    /**
+     * Delete a unit.
+     *
+     * Permanently deletes the specified unit of measure.
+     */
     public function destroy(Unit $unit): JsonResponse
     {
         $unit->delete();
