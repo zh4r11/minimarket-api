@@ -27,6 +27,7 @@ final class ProductResource extends JsonResource
             'sell_price' => $this->sell_price,
             'stock' => $this->stock,
             'min_stock' => $this->min_stock,
+            'has_variants' => $this->variants()->exists(),
             'is_active' => $this->is_active,
             'category' => $this->whenLoaded('category', fn () => new CategoryResource($this->category)),
             'brand' => $this->whenLoaded('brand', fn () => new BrandResource($this->brand)),
