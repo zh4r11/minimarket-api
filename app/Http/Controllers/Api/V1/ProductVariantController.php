@@ -30,7 +30,7 @@ final class ProductVariantController extends ApiController
         $perPage = min($request->integer('per_page', 15), 100);
 
         $variants = ProductVariant::query()
-            ->with(['product', 'attributeValues.attribute'])
+            ->with(['product.photos', 'attributeValues.attribute'])
             ->when($request->product_id, fn ($q) => $q->where('product_id', $request->product_id))
             ->when($request->search, fn ($q) => $q->where('sku', 'like', "%{$request->search}%"))
             ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
@@ -56,7 +56,7 @@ final class ProductVariantController extends ApiController
             $variant->attributeValues()->sync($attributeValueIds);
         }
 
-        $variant->load(['product', 'attributeValues.attribute']);
+        $variant->load(['product.photos', 'attributeValues.attribute']);
 
         return $this->created(new ProductVariantResource($variant));
     }
@@ -68,7 +68,7 @@ final class ProductVariantController extends ApiController
      */
     public function show(ProductVariant $productVariant): JsonResponse
     {
-        $productVariant->load(['product', 'attributeValues.attribute']);
+        $productVariant->load(['product.photos', 'attributeValues.attribute']);
 
         return $this->success(new ProductVariantResource($productVariant));
     }
@@ -90,7 +90,7 @@ final class ProductVariantController extends ApiController
             $productVariant->attributeValues()->sync($attributeValueIds);
         }
 
-        $productVariant->load(['product', 'attributeValues.attribute']);
+        $productVariant->load(['product.photos', 'attributeValues.attribute']);
 
         return $this->success(new ProductVariantResource($productVariant));
     }

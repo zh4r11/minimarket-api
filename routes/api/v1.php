@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BrandController;
+use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\BundleController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ProductController;
@@ -68,6 +69,13 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         'show' => 'api.v1.suppliers.show',
         'update' => 'api.v1.suppliers.update',
         'destroy' => 'api.v1.suppliers.destroy',
+    ]);
+    Route::apiResource('customers', CustomerController::class)->names([
+        'index' => 'api.v1.customers.index',
+        'store' => 'api.v1.customers.store',
+        'show' => 'api.v1.customers.show',
+        'update' => 'api.v1.customers.update',
+        'destroy' => 'api.v1.customers.destroy',
     ]);
     Route::apiResource('products', ProductController::class)->names([
         'index' => 'api.v1.products.index',
