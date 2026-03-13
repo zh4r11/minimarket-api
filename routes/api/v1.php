@@ -3,13 +3,19 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\BrandController;
+use App\Http\Controllers\Api\V1\BundleController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ProductVariantAttributeController;
+use App\Http\Controllers\Api\V1\ProductVariantAttributeValueController;
+use App\Http\Controllers\Api\V1\ProductVariantController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\StockMovementController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\UnitController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +45,13 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         'show' => 'api.v1.categories.show',
         'update' => 'api.v1.categories.update',
         'destroy' => 'api.v1.categories.destroy',
+    ]);
+    Route::apiResource('brands', BrandController::class)->names([
+        'index' => 'api.v1.brands.index',
+        'store' => 'api.v1.brands.store',
+        'show' => 'api.v1.brands.show',
+        'update' => 'api.v1.brands.update',
+        'destroy' => 'api.v1.brands.destroy',
     ]);
     Route::apiResource('units', UnitController::class)->names([
         'index' => 'api.v1.units.index',
@@ -78,6 +91,47 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
     Route::get('stock-movements', [StockMovementController::class, 'index'])->name('api.v1.stock-movements.index');
     Route::post('stock-movements', [StockMovementController::class, 'store'])->name('api.v1.stock-movements.store');
     Route::get('stock-movements/{stockMovement}', [StockMovementController::class, 'show'])->name('api.v1.stock-movements.show');
+
+    // Product variants
+    Route::apiResource('product-variant-attributes', ProductVariantAttributeController::class)->names([
+        'index' => 'api.v1.product-variant-attributes.index',
+        'store' => 'api.v1.product-variant-attributes.store',
+        'show' => 'api.v1.product-variant-attributes.show',
+        'update' => 'api.v1.product-variant-attributes.update',
+        'destroy' => 'api.v1.product-variant-attributes.destroy',
+    ]);
+    Route::apiResource('product-variant-attribute-values', ProductVariantAttributeValueController::class)->names([
+        'index' => 'api.v1.product-variant-attribute-values.index',
+        'store' => 'api.v1.product-variant-attribute-values.store',
+        'show' => 'api.v1.product-variant-attribute-values.show',
+        'update' => 'api.v1.product-variant-attribute-values.update',
+        'destroy' => 'api.v1.product-variant-attribute-values.destroy',
+    ]);
+    Route::apiResource('product-variants', ProductVariantController::class)->names([
+        'index' => 'api.v1.product-variants.index',
+        'store' => 'api.v1.product-variants.store',
+        'show' => 'api.v1.product-variants.show',
+        'update' => 'api.v1.product-variants.update',
+        'destroy' => 'api.v1.product-variants.destroy',
+    ]);
+
+    // Bundles
+    Route::apiResource('bundles', BundleController::class)->names([
+        'index' => 'api.v1.bundles.index',
+        'store' => 'api.v1.bundles.store',
+        'show' => 'api.v1.bundles.show',
+        'update' => 'api.v1.bundles.update',
+        'destroy' => 'api.v1.bundles.destroy',
+    ]);
+
+    // User & role management (admin only)
+    Route::middleware('role:admin')->group(function (): void {
+        Route::get('users', [UserController::class, 'index'])->name('api.v1.users.index');
+        Route::get('users/{user}', [UserController::class, 'show'])->name('api.v1.users.show');
+        Route::get('roles', [UserController::class, 'roles'])->name('api.v1.roles.index');
+        Route::post('users/{user}/roles', [UserController::class, 'assignRole'])->name('api.v1.users.roles.assign');
+        Route::delete('users/{user}/roles/{role}', [UserController::class, 'removeRole'])->name('api.v1.users.roles.remove');
+    });
 
     // Email verification
     Route::post('email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])

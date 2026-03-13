@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
-use App\Models\User;
+use App\Models\ProductVariantAttributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin User
+ * @mixin ProductVariantAttributeValue
  */
-final class UserResource extends JsonResource
+final class ProductVariantAttributeValueResource extends JsonResource
 {
     /**
      * @return array<string, mixed>
@@ -20,10 +20,9 @@ final class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'roles' => $this->getRoleNames(),
-            'email_verified_at' => $this->email_verified_at?->toIso8601String(),
+            'attribute_id' => $this->attribute_id,
+            'value' => $this->value,
+            'attribute' => $this->whenLoaded('attribute', fn () => new ProductVariantAttributeResource($this->attribute)),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

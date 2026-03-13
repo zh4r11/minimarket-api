@@ -7,7 +7,7 @@ namespace App\Http\Requests\Api\V1;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class StoreProductRequest extends FormRequest
+final class StoreBundleRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -20,17 +20,15 @@ final class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
-            'unit_id' => ['nullable', 'integer', 'exists:units,id'],
-            'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
+            'sku' => ['required', 'string', 'max:100', 'unique:bundles,sku'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'buy_price' => ['required', 'numeric', 'min:0'],
             'sell_price' => ['required', 'numeric', 'min:0'],
-            'stock' => ['integer', 'min:0'],
-            'min_stock' => ['integer', 'min:0'],
             'is_active' => ['boolean'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.product_id' => ['nullable', 'integer', 'exists:products,id'],
+            'items.*.product_variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
         ];
     }
 }

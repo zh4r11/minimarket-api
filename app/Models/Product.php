@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int|null $category_id
+ * @property int|null $brand_id
  * @property int|null $unit_id
  * @property string $sku
  * @property string $name
@@ -34,6 +35,7 @@ final class Product extends Model
     /** @var list<string> */
     protected $fillable = [
         'category_id',
+        'brand_id',
         'unit_id',
         'sku',
         'name',
@@ -62,6 +64,12 @@ final class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    /** @return BelongsTo<Brand, $this> */
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
     /** @return BelongsTo<Unit, $this> */
     public function unit(): BelongsTo
     {
@@ -84,5 +92,11 @@ final class Product extends Model
     public function stockMovements(): HasMany
     {
         return $this->hasMany(StockMovement::class);
+    }
+
+    /** @return HasMany<ProductVariant, $this> */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class);
     }
 }
