@@ -38,12 +38,14 @@ final class ProductPhotoController extends ApiController
         }
 
         $nextOrder = $existingCount;
+        $isFirstBatch = $existingCount === 0;
 
-        foreach ($request->file('photos') as $file) {
+        foreach ($request->file('photos') as $index => $file) {
             $path = $file->store('product-photos', 'public');
             $product->photos()->create([
                 'path' => $path,
                 'sort_order' => $nextOrder++,
+                'is_main' => $isFirstBatch && $index === 0,
             ]);
         }
 
@@ -63,9 +65,34 @@ final class ProductPhotoController extends ApiController
             return $this->forbidden('Foto ini tidak milik produk yang dimaksud.');
         }
 
+        $wasMain = $photo->is_main;
+
         Storage::disk('public')->delete($photo->path);
         $photo->delete();
 
+        if ($wasMain) {
+            $product->photos()->orderBy('sort_order')->first()?->update(['is_main' => true]);
+        }
+
         return $this->noContent();
+    }
+
+    /**
+     * Set main photo for a product.
+     *
+     * Marks the specified photo as the main photo, unsets all others.
+     */
+    public function setMain(Product $product, ProductPhoto $photo): JsonResponse
+    {
+        if ($photo->photoable_type !== Product::class || $photo->photoable_id !== $product->id) {
+            return $this->forbidden('Foto ini tidak milik produk yang dimaksud.');
+        }
+
+        $product->photos()->update(['is_main' => false]);
+        $photo->update(['is_main' => true]);
+
+        $product->load('photos');
+
+        return $this->success(ProductPhotoResource::collection($product->photos));
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
  * @property int $photoable_id
  * @property string $path
  * @property int $sort_order
+ * @property bool $is_main
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -26,6 +27,7 @@ final class ProductPhoto extends Model
         'photoable_id',
         'path',
         'sort_order',
+        'is_main',
     ];
 
     /** @return MorphTo<Model, $this> */
@@ -43,6 +45,7 @@ final class ProductPhoto extends Model
     {
         return [
             'sort_order' => 'integer',
+            'is_main' => 'boolean',
         ];
     }
 }

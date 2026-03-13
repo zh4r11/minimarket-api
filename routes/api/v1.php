@@ -78,6 +78,7 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
     ]);
     Route::post('products/{product}/photos', [ProductPhotoController::class, 'store'])->name('api.v1.products.photos.store');
     Route::delete('products/{product}/photos/{photo}', [ProductPhotoController::class, 'destroy'])->name('api.v1.products.photos.destroy');
+    Route::patch('products/{product}/photos/{photo}/main', [ProductPhotoController::class, 'setMain'])->name('api.v1.products.photos.set-main');
     Route::apiResource('purchases', PurchaseController::class)->names([
         'index' => 'api.v1.purchases.index',
         'store' => 'api.v1.purchases.store',
@@ -120,6 +121,7 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
     ]);
     Route::post('product-variants/{productVariant}/photos', [ProductVariantPhotoController::class, 'store'])->name('api.v1.product-variants.photos.store');
     Route::delete('product-variants/{productVariant}/photos/{photo}', [ProductVariantPhotoController::class, 'destroy'])->name('api.v1.product-variants.photos.destroy');
+    Route::patch('product-variants/{productVariant}/photos/{photo}/main', [ProductVariantPhotoController::class, 'setMain'])->name('api.v1.product-variants.photos.set-main');
 
     // Bundles
     Route::apiResource('bundles', BundleController::class)->names([

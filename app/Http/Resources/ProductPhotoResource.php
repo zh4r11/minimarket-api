@@ -22,6 +22,7 @@ final class ProductPhotoResource extends JsonResource
             'id' => $this->id,
             'url' => $this->url,
             'sort_order' => $this->sort_order,
+            'is_main' => $this->is_main,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }
