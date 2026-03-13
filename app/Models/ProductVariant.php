@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -65,5 +66,11 @@ final class ProductVariant extends Model
             'variant_id',
             'attribute_value_id'
         );
+    }
+
+    /** @return MorphMany<ProductPhoto, $this> */
+    public function photos(): MorphMany
+    {
+        return $this->morphMany(ProductPhoto::class, 'photoable')->orderBy('sort_order');
     }
 }

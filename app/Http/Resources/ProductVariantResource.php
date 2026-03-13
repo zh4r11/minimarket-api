@@ -29,6 +29,7 @@ final class ProductVariantResource extends JsonResource
             'is_active' => $this->is_active,
             'product' => $this->whenLoaded('product', fn () => new ProductResource($this->product)),
             'attribute_values' => $this->whenLoaded('attributeValues', fn () => ProductVariantAttributeValueResource::collection($this->attributeValues)),
+            'photos' => $this->whenLoaded('photos', fn () => ProductPhotoResource::collection($this->photos)),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

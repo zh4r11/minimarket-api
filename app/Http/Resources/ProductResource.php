@@ -23,6 +23,7 @@ final class ProductResource extends JsonResource
             'sku' => $this->sku,
             'name' => $this->name,
             'description' => $this->description,
+            'photos' => $this->whenLoaded('photos', fn () => ProductPhotoResource::collection($this->photos)),
             'buy_price' => $this->buy_price,
             'sell_price' => $this->sell_price,
             'stock' => $this->stock,

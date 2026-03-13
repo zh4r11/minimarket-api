@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -98,5 +99,11 @@ final class Product extends Model
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class);
+    }
+
+    /** @return MorphMany<ProductPhoto, $this> */
+    public function photos(): MorphMany
+    {
+        return $this->morphMany(ProductPhoto::class, 'photoable')->orderBy('sort_order');
     }
 }

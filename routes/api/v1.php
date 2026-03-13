@@ -7,9 +7,11 @@ use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\BundleController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ProductPhotoController;
 use App\Http\Controllers\Api\V1\ProductVariantAttributeController;
 use App\Http\Controllers\Api\V1\ProductVariantAttributeValueController;
 use App\Http\Controllers\Api\V1\ProductVariantController;
+use App\Http\Controllers\Api\V1\ProductVariantPhotoController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\StockMovementController;
@@ -74,6 +76,8 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         'update' => 'api.v1.products.update',
         'destroy' => 'api.v1.products.destroy',
     ]);
+    Route::post('products/{product}/photos', [ProductPhotoController::class, 'store'])->name('api.v1.products.photos.store');
+    Route::delete('products/{product}/photos/{photo}', [ProductPhotoController::class, 'destroy'])->name('api.v1.products.photos.destroy');
     Route::apiResource('purchases', PurchaseController::class)->names([
         'index' => 'api.v1.purchases.index',
         'store' => 'api.v1.purchases.store',
@@ -114,6 +118,8 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         'update' => 'api.v1.product-variants.update',
         'destroy' => 'api.v1.product-variants.destroy',
     ]);
+    Route::post('product-variants/{productVariant}/photos', [ProductVariantPhotoController::class, 'store'])->name('api.v1.product-variants.photos.store');
+    Route::delete('product-variants/{productVariant}/photos/{photo}', [ProductVariantPhotoController::class, 'destroy'])->name('api.v1.product-variants.photos.destroy');
 
     // Bundles
     Route::apiResource('bundles', BundleController::class)->names([

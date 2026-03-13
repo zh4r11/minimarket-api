@@ -30,7 +30,7 @@ final class ProductController extends ApiController
         $perPage = min($request->integer('per_page', 15), 100);
 
         $products = Product::query()
-            ->with(['category', 'brand', 'unit'])
+            ->with(['category', 'brand', 'unit', 'photos'])
             ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
                 ->orWhere('sku', 'like', "%{$request->search}%")
                 ->orWhere('description', 'like', "%{$request->search}%"))
@@ -49,7 +49,7 @@ final class ProductController extends ApiController
     public function store(StoreProductRequest $request): JsonResponse
     {
         $product = Product::query()->create($request->validated());
-        $product->load(['category', 'brand', 'unit']);
+        $product->load(['category', 'brand', 'unit', 'photos']);
 
         return $this->created(new ProductResource($product));
     }
@@ -61,7 +61,7 @@ final class ProductController extends ApiController
      */
     public function show(Product $product): JsonResponse
     {
-        $product->load(['category', 'brand', 'unit']);
+        $product->load(['category', 'brand', 'unit', 'photos']);
 
         return $this->success(new ProductResource($product));
     }
@@ -74,7 +74,7 @@ final class ProductController extends ApiController
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
         $product->update($request->validated());
-        $product->load(['category', 'brand', 'unit']);
+        $product->load(['category', 'brand', 'unit', 'photos']);
 
         return $this->success(new ProductResource($product));
     }
