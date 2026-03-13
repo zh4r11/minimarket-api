@@ -29,8 +29,10 @@ final class CategoryController extends ApiController
         $perPage = min($request->integer('per_page', 15), 100);
 
         $categories = Category::query()
+            ->with(['parent', 'children'])
             ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
                 ->orWhere('description', 'like', "%{$request->search}%"))
+            ->when($request->has('parent_id'), fn ($q) => $q->where('parent_id', $request->input('parent_id')))
             ->paginate($perPage);
 
         return $this->success(CategoryResource::collection($categories)->toResponse($request)->getData(true));
@@ -58,6 +60,8 @@ final class CategoryController extends ApiController
      */
     public function show(Category $category): JsonResponse
     {
+        $category->load(['parent', 'children']);
+
         return $this->success(new CategoryResource($category));
     }
 

@@ -23,8 +23,7 @@ final class UpdateCategoryRequest extends FormRequest
         $model = $this->route('category');
         $id = is_object($model) ? $model->id : $model;
 
-        return [
-            'name' => ['sometimes', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($id)],
+        return [            'parent_id'   => ['nullable', 'integer', 'exists:categories,id'],            'name' => ['sometimes', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($id)],
             'description' => ['nullable', 'string'],
             'is_active' => ['boolean'],
         ];
