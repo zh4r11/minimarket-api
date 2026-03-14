@@ -130,7 +130,3 @@ final class StockMovementController extends ApiController
         return $this->created(new StockMovementResource($movement));
     }
 }
-
-        return $this->created(new StockMovementResource($movement));
-    }
-}
