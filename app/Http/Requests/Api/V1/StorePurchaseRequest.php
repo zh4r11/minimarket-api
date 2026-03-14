@@ -21,7 +21,6 @@ final class StorePurchaseRequest extends FormRequest
     {
         return [
             'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
-            'invoice_number' => ['required', 'string', 'unique:purchases,invoice_number'],
             'purchase_date' => ['required', 'date'],
             'notes' => ['nullable', 'string'],
             'status' => ['in:draft,confirmed,received,cancelled'],

@@ -10,6 +10,7 @@ use App\Http\Requests\Api\V1\UpdateSaleRequest;
 use App\Http\Resources\SaleResource;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Services\InvoiceNumberService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,7 @@ final class SaleController extends ApiController
             $validated = $request->validated();
 
             $sale = Sale::query()->create([
-                'invoice_number' => $validated['invoice_number'],
+                'invoice_number' => (new InvoiceNumberService)->generateSaleNumber(),
                 'sale_date' => $validated['sale_date'],
                 'discount_amount' => $validated['discount_amount'] ?? 0,
                 'tax_amount' => $validated['tax_amount'] ?? 0,

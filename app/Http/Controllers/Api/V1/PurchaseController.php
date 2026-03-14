@@ -10,6 +10,7 @@ use App\Http\Requests\Api\V1\UpdatePurchaseRequest;
 use App\Http\Resources\PurchaseResource;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
+use App\Services\InvoiceNumberService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,7 +56,7 @@ final class PurchaseController extends ApiController
 
             $purchase = Purchase::query()->create([
                 'supplier_id' => $validated['supplier_id'] ?? null,
-                'invoice_number' => $validated['invoice_number'],
+                'invoice_number' => (new InvoiceNumberService)->generatePurchaseNumber(),
                 'purchase_date' => $validated['purchase_date'],
                 'notes' => $validated['notes'] ?? null,
                 'status' => $validated['status'] ?? 'draft',

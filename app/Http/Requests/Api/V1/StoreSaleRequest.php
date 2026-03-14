@@ -20,7 +20,6 @@ final class StoreSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'invoice_number' => ['required', 'string', 'unique:sales,invoice_number'],
             'sale_date' => ['required', 'date'],
             'discount_amount' => ['numeric', 'min:0'],
             'tax_amount' => ['numeric', 'min:0'],
