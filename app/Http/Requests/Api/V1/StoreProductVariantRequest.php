@@ -20,8 +20,9 @@ final class StoreProductVariantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => ['required', 'integer', 'exists:products,id'],
-            'sku' => ['required', 'string', 'max:100', 'unique:product_variants,sku'],
+            'parent_id' => ['required', 'integer', 'exists:products,id'],
+            'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
+            'name' => ['nullable', 'string', 'max:255'],
             'buy_price' => ['required', 'numeric', 'min:0'],
             'sell_price' => ['required', 'numeric', 'min:0'],
             'stock' => ['integer', 'min:0'],

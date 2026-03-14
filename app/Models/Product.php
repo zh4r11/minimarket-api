@@ -8,12 +8,15 @@ use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int|null $parent_id
+ * @property string $type
  * @property int|null $category_id
  * @property int|null $brand_id
  * @property int|null $unit_id
@@ -35,6 +38,8 @@ final class Product extends Model
 
     /** @var list<string> */
     protected $fillable = [
+        'parent_id',
+        'type',
         'category_id',
         'brand_id',
         'unit_id',
@@ -63,6 +68,12 @@ final class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /** @return BelongsTo<Product, $this> */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'parent_id');
     }
 
     /** @return BelongsTo<Brand, $this> */
@@ -98,7 +109,18 @@ final class Product extends Model
     /** @return HasMany<ProductVariant, $this> */
     public function variants(): HasMany
     {
-        return $this->hasMany(ProductVariant::class);
+        return $this->hasMany(ProductVariant::class, 'parent_id');
+    }
+
+    /** @return BelongsToMany<ProductVariantAttributeValue, $this> */
+    public function attributeValues(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ProductVariantAttributeValue::class,
+            'product_variant_values',
+            'product_id',
+            'attribute_value_id'
+        );
     }
 
     /** @return MorphMany<ProductPhoto, $this> */

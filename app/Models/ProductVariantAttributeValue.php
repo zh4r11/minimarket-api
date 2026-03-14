@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\ProductVariant;
 use Illuminate\Support\Carbon;
 
 /**
@@ -43,7 +42,7 @@ final class ProductVariantAttributeValue extends Model
             ProductVariant::class,
             'product_variant_values',
             'attribute_value_id',
-            'variant_id'
+            'product_id'
         );
     }
 }

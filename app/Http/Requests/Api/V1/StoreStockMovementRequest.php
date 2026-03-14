@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api\V1;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreStockMovementRequest extends FormRequest
@@ -20,8 +19,7 @@ final class StoreStockMovementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => ['required_without:variant_id', 'nullable', 'integer', 'exists:products,id'],
-            'variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
+            'product_id' => ['required', 'integer', 'exists:products,id'],
             'type' => ['required', 'in:in,out,adjustment,initial'],
             'quantity' => ['required', 'integer', 'min:1'],
             'notes' => ['nullable', 'string'],

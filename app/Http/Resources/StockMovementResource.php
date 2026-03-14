@@ -22,8 +22,6 @@ final class StockMovementResource extends JsonResource
             'id' => $this->id,
             'product_id' => $this->product_id,
             'product' => $this->whenLoaded('product', fn () => new ProductResource($this->product)),
-            'variant_id' => $this->variant_id,
-            'variant' => $this->whenLoaded('variant', fn () => new ProductVariantResource($this->variant)),
             'type' => $this->type,
             'reference_type' => $this->reference_type,
             'reference_id' => $this->reference_id,

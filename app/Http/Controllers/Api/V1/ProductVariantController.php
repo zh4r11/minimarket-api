@@ -19,7 +19,7 @@ final class ProductVariantController extends ApiController
      *
      * Returns a paginated list of product variants with their attribute values.
      *
-     * @queryParam product_id integer Filter by product ID. Example: 1
+     * @queryParam parent_id integer Filter by parent product ID. Example: 1
      * @queryParam search string Search by SKU. Example: SKU-VAR
      * @queryParam is_active boolean Filter by active status (true/false). Example: true
      * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
@@ -30,8 +30,8 @@ final class ProductVariantController extends ApiController
         $perPage = min($request->integer('per_page', 15), 100);
 
         $variants = ProductVariant::query()
-            ->with(['product.photos', 'attributeValues.attribute'])
-            ->when($request->product_id, fn ($q) => $q->where('product_id', $request->product_id))
+            ->with(['parent', 'attributeValues.attribute', 'photos'])
+            ->when($request->parent_id, fn ($q) => $q->where('parent_id', $request->parent_id))
             ->when($request->search, fn ($q) => $q->where('sku', 'like', "%{$request->search}%"))
             ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
             ->paginate($perPage);
@@ -56,7 +56,7 @@ final class ProductVariantController extends ApiController
             $variant->attributeValues()->sync($attributeValueIds);
         }
 
-        $variant->load(['product.photos', 'attributeValues.attribute']);
+        $variant->load(['parent', 'attributeValues.attribute', 'photos']);
 
         return $this->created(new ProductVariantResource($variant));
     }
@@ -68,7 +68,7 @@ final class ProductVariantController extends ApiController
      */
     public function show(ProductVariant $productVariant): JsonResponse
     {
-        $productVariant->load(['product.photos', 'attributeValues.attribute']);
+        $productVariant->load(['parent', 'attributeValues.attribute', 'photos']);
 
         return $this->success(new ProductVariantResource($productVariant));
     }
@@ -90,7 +90,7 @@ final class ProductVariantController extends ApiController
             $productVariant->attributeValues()->sync($attributeValueIds);
         }
 
-        $productVariant->load(['product.photos', 'attributeValues.attribute']);
+        $productVariant->load(['parent', 'attributeValues.attribute', 'photos']);
 
         return $this->success(new ProductVariantResource($productVariant));
     }
