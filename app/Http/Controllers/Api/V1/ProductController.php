@@ -20,27 +20,27 @@ final class ProductController extends ApiController
      * List products.
      *
      * Returns a paginated list of products with their category and unit. Supports search and filtering.
-     *
-     * @queryParam search string Search by name, SKU, or description. Example: Mie Goreng
-     * @queryParam category_id integer Filter by category ID. Example: 1
-     * @queryParam is_active boolean Filter by active status (true/false). Example: true
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'search'      => 'nullable|string',
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'is_active'   => 'nullable|boolean',
+            'per_page'    => 'nullable|integer|min:1|max:100',
+            'page'        => 'nullable|integer|min:1',
+        ]);
 
-        $search     = $request->string('search')->trim()->toString();
-        $categoryId = $request->integer('category_id') ?: null;
+        $perPage = min($filters['per_page'] ?? 15, 100);
+        $search  = $filters['search'] ?? null;
 
         $products = Product::query()
             ->with(['category', 'brand', 'unit', 'photos'])
             ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%")
                 ->orWhere('sku', 'like', "%{$search}%")
                 ->orWhere('description', 'like', "%{$search}%"))
-            ->when($categoryId, fn ($q) => $q->where('category_id', $categoryId))
-            ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
+            ->when($filters['category_id'] ?? null, fn ($q) => $q->where('category_id', $filters['category_id']))
+            ->when(array_key_exists('is_active', $filters), fn ($q) => $q->where('is_active', $filters['is_active']))
             ->paginate($perPage);
 
         return $this->success(ProductResource::collection($products)->toResponse($request)->getData(true));
