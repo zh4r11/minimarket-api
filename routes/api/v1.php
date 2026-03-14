@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\ProductVariantController;
 use App\Http\Controllers\Api\V1\ProductVariantPhotoController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\SaleController;
+use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\StockMovementController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\UnitController;
@@ -104,6 +105,9 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
     Route::get('stock-movements', [StockMovementController::class, 'index'])->name('api.v1.stock-movements.index');
     Route::post('stock-movements', [StockMovementController::class, 'store'])->name('api.v1.stock-movements.store');
     Route::get('stock-movements/{stockMovement}', [StockMovementController::class, 'show'])->name('api.v1.stock-movements.show');
+
+    // Reports
+    Route::get('reports/stock', [ReportController::class, 'stock'])->name('api.v1.reports.stock');
 
     // Product variants
     Route::apiResource('product-variant-attributes', ProductVariantAttributeController::class)->names([
