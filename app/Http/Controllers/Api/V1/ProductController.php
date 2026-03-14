@@ -31,12 +31,15 @@ final class ProductController extends ApiController
     {
         $perPage = min($request->integer('per_page', 15), 100);
 
+        $search     = $request->string('search')->trim()->toString();
+        $categoryId = $request->integer('category_id') ?: null;
+
         $products = Product::query()
             ->with(['category', 'brand', 'unit', 'photos'])
-            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
-                ->orWhere('sku', 'like', "%{$request->search}%")
-                ->orWhere('description', 'like', "%{$request->search}%"))
-            ->when($request->category_id, fn ($q) => $q->where('category_id', $request->category_id))
+            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%")
+                ->orWhere('sku', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%"))
+            ->when($categoryId, fn ($q) => $q->where('category_id', $categoryId))
             ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
             ->paginate($perPage);
 
