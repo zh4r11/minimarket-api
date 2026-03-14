@@ -22,6 +22,8 @@ final class PurchaseItemResource extends JsonResource
             'id' => $this->id,
             'product_id' => $this->product_id,
             'product' => $this->whenLoaded('product', fn () => new ProductResource($this->product)),
+            'variant_id' => $this->variant_id,
+            'variant' => $this->whenLoaded('variant', fn () => new ProductVariantResource($this->variant)),
             'quantity' => $this->quantity,
             'buy_price' => $this->buy_price,
             'subtotal' => $this->subtotal,

@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $product_id
+ * @property int|null $variant_id
  * @property string $type
  * @property string|null $reference_type
  * @property int|null $reference_id
@@ -32,6 +33,7 @@ final class StockMovement extends Model
     /** @var list<string> */
     protected $fillable = [
         'product_id',
+        'variant_id',
         'type',
         'reference_type',
         'reference_id',
@@ -55,6 +57,12 @@ final class StockMovement extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /** @return BelongsTo<ProductVariant, $this> */
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(ProductVariant::class, 'variant_id');
     }
 
     /** @return BelongsTo<User, $this> */

@@ -9,6 +9,7 @@ use App\Http\Requests\Api\V1\StoreStockAdjustmentRequest;
 use App\Http\Requests\Api\V1\StoreStockMovementRequest;
 use App\Http\Resources\StockMovementResource;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\StockMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ final class StockMovementController extends ApiController
         $perPage = min($request->integer('per_page', 15), 100);
 
         $movements = StockMovement::query()
-            ->with(['product'])
+            ->with(['product', 'variant'])
             ->when($request->search, fn ($q) => $q->where('notes', 'like', "%{$request->search}%"))
             ->when($request->product_id, fn ($q) => $q->where('product_id', $request->product_id))
             ->when($request->type, fn ($q) => $q->where('type', $request->type))
@@ -52,26 +53,53 @@ final class StockMovementController extends ApiController
         $movement = DB::transaction(function () use ($request): StockMovement {
             $validated = $request->validated();
 
-            $product = \App\Models\Product::query()->lockForUpdate()->findOrFail($validated['product_id']);
-            $beforeStock = $product->stock;
+            $variantId = $validated['variant_id'] ?? null;
 
-            $afterStock = match ($validated['type']) {
-                'in' => $beforeStock + $validated['quantity'],
-                default => $beforeStock - $validated['quantity'],
-            };
+            if ($variantId !== null) {
+                $variant = ProductVariant::query()->lockForUpdate()->findOrFail($variantId);
+                $productId = $variant->product_id;
+                $beforeStock = $variant->stock;
 
-            $movement = StockMovement::query()->create([
-                'product_id' => $validated['product_id'],
-                'type' => $validated['type'],
-                'quantity' => $validated['quantity'],
-                'before_stock' => $beforeStock,
-                'after_stock' => $afterStock,
-                'notes' => $validated['notes'] ?? null,
-                'created_by' => auth()->id(),
-            ]);
+                $afterStock = match ($validated['type']) {
+                    'in' => $beforeStock + $validated['quantity'],
+                    default => $beforeStock - $validated['quantity'],
+                };
 
-            $product->update(['stock' => $afterStock]);
-            $movement->load('product');
+                $movement = StockMovement::query()->create([
+                    'product_id' => $productId,
+                    'variant_id' => $variantId,
+                    'type' => $validated['type'],
+                    'quantity' => $validated['quantity'],
+                    'before_stock' => $beforeStock,
+                    'after_stock' => $afterStock,
+                    'notes' => $validated['notes'] ?? null,
+                    'created_by' => auth()->id(),
+                ]);
+
+                $variant->update(['stock' => $afterStock]);
+                $movement->load(['product', 'variant']);
+            } else {
+                $product = Product::query()->lockForUpdate()->findOrFail($validated['product_id']);
+                $beforeStock = $product->stock;
+
+                $afterStock = match ($validated['type']) {
+                    'in' => $beforeStock + $validated['quantity'],
+                    default => $beforeStock - $validated['quantity'],
+                };
+
+                $movement = StockMovement::query()->create([
+                    'product_id' => $product->id,
+                    'type' => $validated['type'],
+                    'quantity' => $validated['quantity'],
+                    'before_stock' => $beforeStock,
+                    'after_stock' => $afterStock,
+                    'notes' => $validated['notes'] ?? null,
+                    'created_by' => auth()->id(),
+                ]);
+
+                $product->update(['stock' => $afterStock]);
+                $movement->load('product');
+            }
 
             return $movement;
         });
@@ -86,7 +114,7 @@ final class StockMovementController extends ApiController
      */
     public function show(StockMovement $stockMovement): JsonResponse
     {
-        $stockMovement->load('product');
+        $stockMovement->load(['product', 'variant']);
 
         return $this->success(new StockMovementResource($stockMovement));
     }
@@ -106,23 +134,46 @@ final class StockMovementController extends ApiController
         $movement = DB::transaction(function () use ($request): StockMovement {
             $validated = $request->validated();
 
-            $product = Product::query()->lockForUpdate()->findOrFail($validated['product_id']);
-            $beforeStock = $product->stock;
-            $actualStock = $validated['actual_stock'];
-            $diff = abs($actualStock - $beforeStock);
+            $variantId = $validated['variant_id'] ?? null;
 
-            $movement = StockMovement::query()->create([
-                'product_id' => $product->id,
-                'type' => 'adjustment',
-                'quantity' => $diff === 0 ? 0 : $diff,
-                'before_stock' => $beforeStock,
-                'after_stock' => $actualStock,
-                'notes' => $validated['notes'] ?? null,
-                'created_by' => auth()->id(),
-            ]);
+            if ($variantId !== null) {
+                $variant = ProductVariant::query()->lockForUpdate()->findOrFail($variantId);
+                $beforeStock = $variant->stock;
+                $actualStock = $validated['actual_stock'];
+                $diff = abs($actualStock - $beforeStock);
 
-            $product->update(['stock' => $actualStock]);
-            $movement->load('product');
+                $movement = StockMovement::query()->create([
+                    'product_id' => $variant->product_id,
+                    'variant_id' => $variantId,
+                    'type' => 'adjustment',
+                    'quantity' => $diff === 0 ? 0 : $diff,
+                    'before_stock' => $beforeStock,
+                    'after_stock' => $actualStock,
+                    'notes' => $validated['notes'] ?? null,
+                    'created_by' => auth()->id(),
+                ]);
+
+                $variant->update(['stock' => $actualStock]);
+                $movement->load(['product', 'variant']);
+            } else {
+                $product = Product::query()->lockForUpdate()->findOrFail($validated['product_id']);
+                $beforeStock = $product->stock;
+                $actualStock = $validated['actual_stock'];
+                $diff = abs($actualStock - $beforeStock);
+
+                $movement = StockMovement::query()->create([
+                    'product_id' => $product->id,
+                    'type' => 'adjustment',
+                    'quantity' => $diff === 0 ? 0 : $diff,
+                    'before_stock' => $beforeStock,
+                    'after_stock' => $actualStock,
+                    'notes' => $validated['notes'] ?? null,
+                    'created_by' => auth()->id(),
+                ]);
+
+                $product->update(['stock' => $actualStock]);
+                $movement->load('product');
+            }
 
             return $movement;
         });

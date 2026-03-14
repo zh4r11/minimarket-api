@@ -87,7 +87,7 @@ final class ProductController extends ApiController
      */
     public function show(Product $product): JsonResponse
     {
-        $product->load(['category', 'brand', 'unit', 'photos']);
+        $product->load(['category', 'brand', 'unit', 'photos', 'variants.attributeValues.attribute']);
 
         return $this->success(new ProductResource($product));
     }

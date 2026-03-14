@@ -19,7 +19,8 @@ final class StoreStockAdjustmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => ['required', 'integer', 'exists:products,id'],
+            'product_id' => ['required_without:variant_id', 'nullable', 'integer', 'exists:products,id'],
+            'variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
             'actual_stock' => ['required', 'integer', 'min:0'],
             'notes' => ['nullable', 'string'],
         ];

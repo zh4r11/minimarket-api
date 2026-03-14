@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\V1\StorePurchaseRequest;
 use App\Http\Requests\Api\V1\UpdatePurchaseRequest;
 use App\Http\Resources\PurchaseResource;
+use App\Models\ProductVariant;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Services\InvoiceNumberService;
@@ -33,7 +34,7 @@ final class PurchaseController extends ApiController
         $perPage = min($request->integer('per_page', 15), 100);
 
         $purchases = Purchase::query()
-            ->with(['supplier', 'items.product'])
+            ->with(['supplier', 'items.product', 'items.variant'])
             ->when($request->search, fn ($q) => $q->where('invoice_number', 'like', "%{$request->search}%")
                 ->orWhere('notes', 'like', "%{$request->search}%"))
             ->when($request->supplier_id, fn ($q) => $q->where('supplier_id', $request->supplier_id))
@@ -66,12 +67,20 @@ final class PurchaseController extends ApiController
             $totalAmount = 0;
 
             foreach ($validated['items'] as $item) {
+                $variantId = $item['variant_id'] ?? null;
+                $productId = $item['product_id'] ?? null;
+
+                if ($variantId !== null && $productId === null) {
+                    $productId = ProductVariant::query()->findOrFail($variantId)->product_id;
+                }
+
                 $subtotal = $item['quantity'] * $item['buy_price'];
                 $totalAmount += $subtotal;
 
                 PurchaseItem::query()->create([
                     'purchase_id' => $purchase->id,
-                    'product_id' => $item['product_id'],
+                    'product_id' => $productId,
+                    'variant_id' => $variantId,
                     'quantity' => $item['quantity'],
                     'buy_price' => $item['buy_price'],
                     'subtotal' => $subtotal,
@@ -79,7 +88,7 @@ final class PurchaseController extends ApiController
             }
 
             $purchase->update(['total_amount' => $totalAmount]);
-            $purchase->load(['supplier', 'items.product']);
+            $purchase->load(['supplier', 'items.product', 'items.variant']);
 
             return $purchase;
         });
@@ -94,7 +103,7 @@ final class PurchaseController extends ApiController
      */
     public function show(Purchase $purchase): JsonResponse
     {
-        $purchase->load(['supplier', 'items.product']);
+        $purchase->load(['supplier', 'items.product', 'items.variant']);
 
         return $this->success(new PurchaseResource($purchase));
     }
@@ -107,7 +116,7 @@ final class PurchaseController extends ApiController
     public function update(UpdatePurchaseRequest $request, Purchase $purchase): JsonResponse
     {
         $purchase->update($request->validated());
-        $purchase->load(['supplier', 'items.product']);
+        $purchase->load(['supplier', 'items.product', 'items.variant']);
 
         return $this->success(new PurchaseResource($purchase));
     }

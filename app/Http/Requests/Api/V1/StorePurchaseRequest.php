@@ -25,7 +25,8 @@ final class StorePurchaseRequest extends FormRequest
             'notes' => ['nullable', 'string'],
             'status' => ['in:draft,confirmed,received,cancelled'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.product_id' => ['required', 'integer', 'exists:products,id'],
+            'items.*.product_id' => ['nullable', 'integer', 'exists:products,id'],
+            'items.*.variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.buy_price' => ['required', 'numeric', 'min:0'],
         ];
