@@ -9,8 +9,10 @@ use App\Http\Requests\Api\V1\StoreProductRequest;
 use App\Http\Requests\Api\V1\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\StockMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 final class ProductController extends ApiController
 {
@@ -48,8 +50,32 @@ final class ProductController extends ApiController
      */
     public function store(StoreProductRequest $request): JsonResponse
     {
-        $product = Product::query()->create($request->validated());
-        $product->load(['category', 'brand', 'unit', 'photos']);
+        $product = DB::transaction(function () use ($request): Product {
+            $validated = $request->validated();
+            $initialStock = $validated['stock'] ?? 0;
+
+            $product = Product::query()->create(
+                collect($validated)->except('initial_stock_notes')->all()
+            );
+
+            if ($initialStock > 0) {
+                StockMovement::query()->create([
+                    'product_id' => $product->id,
+                    'type' => 'initial',
+                    'reference_type' => Product::class,
+                    'reference_id' => $product->id,
+                    'quantity' => $initialStock,
+                    'before_stock' => 0,
+                    'after_stock' => $initialStock,
+                    'notes' => $validated['initial_stock_notes'] ?? null,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+
+            $product->load(['category', 'brand', 'unit', 'photos']);
+
+            return $product;
+        });
 
         return $this->created(new ProductResource($product));
     }

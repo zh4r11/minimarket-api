@@ -21,7 +21,7 @@ final class StoreStockMovementRequest extends FormRequest
     {
         return [
             'product_id' => ['required', 'integer', 'exists:products,id'],
-            'type' => ['required', 'in:in,out,adjustment'],
+            'type' => ['required', 'in:in,out,adjustment,initial'],
             'quantity' => ['required', 'integer', 'min:1'],
             'notes' => ['nullable', 'string'],
         ];

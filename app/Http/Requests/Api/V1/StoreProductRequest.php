@@ -31,6 +31,7 @@ final class StoreProductRequest extends FormRequest
             'stock' => ['integer', 'min:0'],
             'min_stock' => ['integer', 'min:0'],
             'is_active' => ['boolean'],
+            'initial_stock_notes' => ['nullable', 'string'],
         ];
     }
 }
