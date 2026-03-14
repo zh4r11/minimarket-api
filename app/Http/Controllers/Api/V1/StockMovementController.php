@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Requests\Api\V1\StoreStockAdjustmentRequest;
 use App\Http\Requests\Api\V1\StoreStockMovementRequest;
 use App\Http\Resources\StockMovementResource;
+use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -87,5 +89,44 @@ final class StockMovementController extends ApiController
         $stockMovement->load('product');
 
         return $this->success(new StockMovementResource($stockMovement));
+    }
+
+    /**
+     * Stock adjustment.
+     *
+     * Adjusts the stock of a product to a specific actual count (e.g. after a physical stock count).
+     * Records the before/after snapshot and the difference as an adjustment movement.
+     *
+     * @bodyParam product_id integer required The product ID. Example: 1
+     * @bodyParam actual_stock integer required The actual stock count after physical verification. Must be >= 0. Example: 48
+     * @bodyParam notes string optional Reason for adjustment. Example: Stock opname Maret 2026
+     */
+    public function adjust(StoreStockAdjustmentRequest $request): JsonResponse
+    {
+        $movement = DB::transaction(function () use ($request): StockMovement {
+            $validated = $request->validated();
+
+            $product = Product::query()->lockForUpdate()->findOrFail($validated['product_id']);
+            $beforeStock = $product->stock;
+            $actualStock = $validated['actual_stock'];
+            $diff = abs($actualStock - $beforeStock);
+
+            $movement = StockMovement::query()->create([
+                'product_id' => $product->id,
+                'type' => 'adjustment',
+                'quantity' => $diff === 0 ? 0 : $diff,
+                'before_stock' => $beforeStock,
+                'after_stock' => $actualStock,
+                'notes' => $validated['notes'] ?? null,
+                'created_by' => auth()->id(),
+            ]);
+
+            $product->update(['stock' => $actualStock]);
+            $movement->load('product');
+
+            return $movement;
+        });
+
+        return $this->created(new StockMovementResource($movement));
     }
 }

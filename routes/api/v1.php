@@ -105,6 +105,7 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
     Route::get('stock-movements', [StockMovementController::class, 'index'])->name('api.v1.stock-movements.index');
     Route::post('stock-movements', [StockMovementController::class, 'store'])->name('api.v1.stock-movements.store');
     Route::get('stock-movements/{stockMovement}', [StockMovementController::class, 'show'])->name('api.v1.stock-movements.show');
+    Route::post('stock-adjustments', [StockMovementController::class, 'adjust'])->name('api.v1.stock-adjustments.store');
 
     // Reports
     Route::get('reports/stock', [ReportController::class, 'stock'])->name('api.v1.reports.stock');
