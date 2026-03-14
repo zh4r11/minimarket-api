@@ -18,18 +18,20 @@ final class UnitController extends ApiController
      * List units.
      *
      * Returns a paginated list of units of measure. Supports filtering by keyword.
-     *
-     * @queryParam search string Search by name or symbol. Example: kg
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'search'   => 'nullable|string',
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'page'     => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $units = Unit::query()
-            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
-                ->orWhere('symbol', 'like', "%{$request->search}%"))
+            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
+                ->orWhere('symbol', 'like', "%{$s}%"))
             ->paginate($perPage);
 
         return $this->success(UnitResource::collection($units)->toResponse($request)->getData(true));

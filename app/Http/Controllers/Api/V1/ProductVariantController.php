@@ -18,22 +18,24 @@ final class ProductVariantController extends ApiController
      * List product variants.
      *
      * Returns a paginated list of product variants with their attribute values.
-     *
-     * @queryParam parent_id integer Filter by parent product ID. Example: 1
-     * @queryParam search string Search by SKU. Example: SKU-VAR
-     * @queryParam is_active boolean Filter by active status (true/false). Example: true
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'parent_id' => 'nullable|integer|exists:products,id',
+            'search'    => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+            'per_page'  => 'nullable|integer|min:1|max:100',
+            'page'      => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $variants = ProductVariant::query()
             ->with(['parent', 'attributeValues.attribute', 'photos'])
-            ->when($request->parent_id, fn ($q) => $q->where('parent_id', $request->parent_id))
-            ->when($request->search, fn ($q) => $q->where('sku', 'like', "%{$request->search}%"))
-            ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
+            ->when($filters['parent_id'] ?? null, fn ($q) => $q->where('parent_id', $filters['parent_id']))
+            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('sku', 'like', "%{$s}%"))
+            ->when(array_key_exists('is_active', $filters), fn ($q) => $q->where('is_active', $filters['is_active']))
             ->paginate($perPage);
 
         return $this->success(ProductVariantResource::collection($variants)->toResponse($request)->getData(true));

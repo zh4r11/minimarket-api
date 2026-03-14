@@ -19,20 +19,23 @@ final class CategoryController extends ApiController
      * List categories.
      *
      * Returns a paginated list of categories. Supports filtering by keyword.
-     *
-     * @queryParam search string Search by name or description. Example: Minuman
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'search'    => 'nullable|string',
+            'parent_id' => 'nullable|integer|exists:categories,id',
+            'per_page'  => 'nullable|integer|min:1|max:100',
+            'page'      => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $categories = Category::query()
             ->with(['parent', 'children'])
-            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
-                ->orWhere('description', 'like', "%{$request->search}%"))
-            ->when($request->has('parent_id'), fn ($q) => $q->where('parent_id', $request->input('parent_id')))
+            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
+                ->orWhere('description', 'like', "%{$s}%"))
+            ->when($filters['parent_id'] ?? null, fn ($q) => $q->where('parent_id', $filters['parent_id']))
             ->paginate($perPage);
 
         return $this->success(CategoryResource::collection($categories)->toResponse($request)->getData(true));

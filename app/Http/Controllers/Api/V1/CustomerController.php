@@ -18,22 +18,24 @@ final class CustomerController extends ApiController
      * List customers.
      *
      * Returns a paginated list of customers. Supports search and filtering.
-     *
-     * @queryParam search string Search by name, email, phone, or city. Example: John
-     * @queryParam is_active boolean Filter by active status (true/false). Example: true
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'search'    => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+            'per_page'  => 'nullable|integer|min:1|max:100',
+            'page'      => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $customers = Customer::query()
-            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
-                ->orWhere('email', 'like', "%{$request->search}%")
-                ->orWhere('phone', 'like', "%{$request->search}%")
-                ->orWhere('city', 'like', "%{$request->search}%"))
-            ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
+            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
+                ->orWhere('email', 'like', "%{$s}%")
+                ->orWhere('phone', 'like', "%{$s}%")
+                ->orWhere('city', 'like', "%{$s}%"))
+            ->when(array_key_exists('is_active', $filters), fn ($q) => $q->where('is_active', $filters['is_active']))
             ->paginate($perPage);
 
         return $this->success(CustomerResource::collection($customers)->toResponse($request)->getData(true));

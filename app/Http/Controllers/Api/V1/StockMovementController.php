@@ -20,22 +20,24 @@ final class StockMovementController extends ApiController
      * List stock movements.
      *
      * Returns a paginated list of stock movement records with product details. Supports search and filtering.
-     *
-     * @queryParam search string Search by notes. Example: penyesuaian
-     * @queryParam product_id integer Filter by product ID. Example: 5
-     * @queryParam type string Filter by movement type (in, out). Example: in
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'search'     => 'nullable|string',
+            'product_id' => 'nullable|integer|exists:products,id',
+            'type'       => 'nullable|string|in:in,out,initial,adjustment',
+            'per_page'   => 'nullable|integer|min:1|max:100',
+            'page'       => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $movements = StockMovement::query()
             ->with(['product'])
-            ->when($request->search, fn ($q) => $q->where('notes', 'like', "%{$request->search}%"))
-            ->when($request->product_id, fn ($q) => $q->where('product_id', $request->product_id))
-            ->when($request->type, fn ($q) => $q->where('type', $request->type))
+            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('notes', 'like', "%{$s}%"))
+            ->when($filters['product_id'] ?? null, fn ($q) => $q->where('product_id', $filters['product_id']))
+            ->when($filters['type'] ?? null, fn ($q) => $q->where('type', $filters['type']))
             ->paginate($perPage);
 
         return $this->success(StockMovementResource::collection($movements)->toResponse($request)->getData(true));

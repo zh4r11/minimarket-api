@@ -21,23 +21,25 @@ final class PurchaseController extends ApiController
      * List purchases.
      *
      * Returns a paginated list of purchase orders with supplier and items. Supports search and filtering.
-     *
-     * @queryParam search string Search by invoice number or notes. Example: INV-2025
-     * @queryParam supplier_id integer Filter by supplier ID. Example: 2
-     * @queryParam status string Filter by status (draft, confirmed, received). Example: confirmed
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'search'      => 'nullable|string',
+            'supplier_id' => 'nullable|integer|exists:suppliers,id',
+            'status'      => 'nullable|string|in:draft,confirmed,received',
+            'per_page'    => 'nullable|integer|min:1|max:100',
+            'page'        => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $purchases = Purchase::query()
             ->with(['supplier', 'items.product'])
-            ->when($request->search, fn ($q) => $q->where('invoice_number', 'like', "%{$request->search}%")
-                ->orWhere('notes', 'like', "%{$request->search}%"))
-            ->when($request->supplier_id, fn ($q) => $q->where('supplier_id', $request->supplier_id))
-            ->when($request->status, fn ($q) => $q->where('status', $request->status))
+            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('invoice_number', 'like', "%{$s}%")
+                ->orWhere('notes', 'like', "%{$s}%"))
+            ->when($filters['supplier_id'] ?? null, fn ($q) => $q->where('supplier_id', $filters['supplier_id']))
+            ->when($filters['status'] ?? null, fn ($q) => $q->where('status', $filters['status']))
             ->paginate($perPage);
 
         return $this->success(PurchaseResource::collection($purchases)->toResponse($request)->getData(true));

@@ -18,13 +18,15 @@ final class UserController extends ApiController
      * List all users.
      *
      * Returns a paginated list of users with their assigned roles.
-     *
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'page'     => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $users = User::query()
             ->with('roles')

@@ -21,23 +21,25 @@ final class SaleController extends ApiController
      * List sales.
      *
      * Returns a paginated list of sales transactions with cashier and items. Supports search and filtering.
-     *
-     * @queryParam search string Search by invoice number or notes. Example: INV-2025
-     * @queryParam status string Filter by status (draft, completed, cancelled). Example: completed
-     * @queryParam payment_method string Filter by payment method (cash, transfer, qris). Example: cash
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'search'         => 'nullable|string',
+            'status'         => 'nullable|string|in:draft,completed,cancelled',
+            'payment_method' => 'nullable|string|in:cash,transfer,qris',
+            'per_page'       => 'nullable|integer|min:1|max:100',
+            'page'           => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $sales = Sale::query()
             ->with(['cashier', 'items.product'])
-            ->when($request->search, fn ($q) => $q->where('invoice_number', 'like', "%{$request->search}%")
-                ->orWhere('notes', 'like', "%{$request->search}%"))
-            ->when($request->status, fn ($q) => $q->where('status', $request->status))
-            ->when($request->payment_method, fn ($q) => $q->where('payment_method', $request->payment_method))
+            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('invoice_number', 'like', "%{$s}%")
+                ->orWhere('notes', 'like', "%{$s}%"))
+            ->when($filters['status'] ?? null, fn ($q) => $q->where('status', $filters['status']))
+            ->when($filters['payment_method'] ?? null, fn ($q) => $q->where('payment_method', $filters['payment_method']))
             ->paginate($perPage);
 
         return $this->success(SaleResource::collection($sales)->toResponse($request)->getData(true));

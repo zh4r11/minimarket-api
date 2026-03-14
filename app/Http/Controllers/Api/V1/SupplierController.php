@@ -18,20 +18,22 @@ final class SupplierController extends ApiController
      * List suppliers.
      *
      * Returns a paginated list of suppliers. Supports filtering by keyword.
-     *
-     * @queryParam search string Search by name, email, phone, or city. Example: Jakarta
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'search'   => 'nullable|string',
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'page'     => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = min($filters['per_page'] ?? 15, 100);
 
         $suppliers = Supplier::query()
-            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
-                ->orWhere('email', 'like', "%{$request->search}%")
-                ->orWhere('phone', 'like', "%{$request->search}%")
-                ->orWhere('city', 'like', "%{$request->search}%"))
+            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
+                ->orWhere('email', 'like', "%{$s}%")
+                ->orWhere('phone', 'like', "%{$s}%")
+                ->orWhere('city', 'like', "%{$s}%"))
             ->paginate($perPage);
 
         return $this->success(SupplierResource::collection($suppliers)->toResponse($request)->getData(true));
