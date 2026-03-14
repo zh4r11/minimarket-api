@@ -21,11 +21,11 @@ final class ProductController extends ApiController
      *
      * Returns a paginated list of products with their category and unit. Supports search and filtering.
      *
-     * @queryParam search string Search by name, SKU, or description. Example: Mie Goreng
-     * @queryParam category_id integer Filter by category ID. Example: 1
-     * @queryParam is_active boolean Filter by active status (true/false). Example: true
-     * @queryParam per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
-     * @queryParam page integer Page number. Example: 1
+     * search string Search by name, SKU, or description. Example: Mie Goreng
+     * category_id integer Filter by category ID. Example: 1
+     * is_active boolean Filter by active status (true/false). Example: true
+     * per_page integer Number of items per page (max 100). Defaults to 15. Example: 20
+     * page integer Page number. Example: 1
      */
     public function index(Request $request): JsonResponse
     {
