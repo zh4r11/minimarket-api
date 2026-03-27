@@ -22,14 +22,13 @@ final class UpdateBundleRequest extends FormRequest
         $bundleId = $this->route('bundle')?->id;
 
         return [
-            'sku' => ['sometimes', 'string', 'max:100', "unique:bundles,sku,{$bundleId}"],
+            'sku' => ['sometimes', 'string', 'max:100', "unique:products,sku,{$bundleId}"],
             'name' => ['sometimes', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'sell_price' => ['sometimes', 'numeric', 'min:0'],
             'is_active' => ['boolean'],
             'items' => ['sometimes', 'array', 'min:1'],
-            'items.*.product_id' => ['nullable', 'integer', 'exists:products,id'],
-            'items.*.product_variant_id' => ['nullable', 'integer', 'exists:products,id'],
+            'items.*.product_id' => ['required_with:items', 'integer', 'exists:products,id'],
             'items.*.quantity' => ['required_with:items', 'integer', 'min:1'],
         ];
     }

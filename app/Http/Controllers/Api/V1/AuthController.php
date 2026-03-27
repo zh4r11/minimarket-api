@@ -13,15 +13,16 @@ use App\Http\Requests\Api\V1\ResetPasswordRequest;
 use App\Http\Requests\Api\V1\VerifyEmailRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Verified;
+use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 
 final class AuthController extends ApiController
 {
+    public function __construct(
+        private readonly AuthService $authService,
+    ) {}
+
     /**
      * Register a new user.
      *
@@ -30,19 +31,11 @@ final class AuthController extends ApiController
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        $user = User::query()->create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $user->sendEmailVerificationNotification();
-
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $result = $this->authService->register($request->validated());
 
         return $this->created([
-            'user' => new UserResource($user),
-            'token' => $token,
+            'user' => new UserResource($result['user']),
+            'token' => $result['token'],
         ], 'User registered successfully. Please check your email to verify your account.');
     }
 
@@ -54,17 +47,15 @@ final class AuthController extends ApiController
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        $user = User::query()->where('email', $request->email)->first();
+        $result = $this->authService->login($request->validated());
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $result) {
             return $this->unauthorized('Invalid credentials');
         }
 
-        $token = $user->createToken('auth-token')->plainTextToken;
-
         return $this->success([
-            'user' => new UserResource($user),
-            'token' => $token,
+            'user' => new UserResource($result['user']),
+            'token' => $result['token'],
         ], 'Login successful');
     }
 
@@ -77,7 +68,7 @@ final class AuthController extends ApiController
     {
         /** @var User $user */
         $user = $request->user();
-        $user->currentAccessToken()->delete();
+        $this->authService->logout($user);
 
         return $this->success(message: 'Logged out successfully');
     }
@@ -101,16 +92,12 @@ final class AuthController extends ApiController
     {
         /** @var User $user */
         $user = $request->user();
+        $status = $this->authService->verifyEmail($user);
 
-        if ($user->hasVerifiedEmail()) {
-            return $this->success(message: 'Email already verified');
-        }
-
-        if ($user->markEmailAsVerified()) {
-            event(new Verified($user));
-        }
-
-        return $this->success(message: 'Email verified successfully');
+        return match ($status) {
+            'already_verified' => $this->success(message: 'Email already verified'),
+            default => $this->success(message: 'Email verified successfully'),
+        };
     }
 
     /**
@@ -120,19 +107,13 @@ final class AuthController extends ApiController
      */
     public function resendVerificationEmail(ResendVerificationRequest $request): JsonResponse
     {
-        $user = User::query()->where('email', $request->email)->first();
+        $status = $this->authService->resendVerificationEmail($request->email);
 
-        if (! $user) {
-            return $this->notFound('User not found');
-        }
-
-        if ($user->hasVerifiedEmail()) {
-            return $this->error('Email already verified', 400);
-        }
-
-        $user->sendEmailVerificationNotification();
-
-        return $this->success(message: 'Verification email sent successfully');
+        return match ($status) {
+            'not_found' => $this->notFound('User not found'),
+            'already_verified' => $this->error('Email already verified', 400),
+            default => $this->success(message: 'Verification email sent successfully'),
+        };
     }
 
     /**
@@ -142,11 +123,9 @@ final class AuthController extends ApiController
      */
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $sent = $this->authService->forgotPassword($request->only('email'));
 
-        if ($status === Password::RESET_LINK_SENT) {
+        if ($sent) {
             return $this->success(message: 'Password reset link sent to your email');
         }
 
@@ -161,30 +140,15 @@ final class AuthController extends ApiController
      */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user, string $password): void {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->save();
-
-                $user->tokens()->delete();
-
-                event(new PasswordReset($user));
-            }
+        $status = $this->authService->resetPassword(
+            $request->only('email', 'password', 'password_confirmation', 'token')
         );
 
-        if ($status === Password::PASSWORD_RESET) {
-            return $this->success(message: 'Password reset successfully');
-        }
-
-        return $this->error(
-            match ($status) {
-                Password::INVALID_TOKEN => 'Invalid or expired reset token',
-                Password::INVALID_USER => 'User not found',
-                default => 'Unable to reset password',
-            },
-            400
-        );
+        return match ($status) {
+            'reset' => $this->success(message: 'Password reset successfully'),
+            'invalid_token' => $this->error('Invalid or expired reset token', 400),
+            'invalid_user' => $this->error('User not found', 400),
+            default => $this->error('Unable to reset password', 400),
+        };
     }
 }

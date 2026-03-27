@@ -9,11 +9,16 @@ use App\Http\Requests\Api\V1\StoreSupplierRequest;
 use App\Http\Requests\Api\V1\UpdateSupplierRequest;
 use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
+use App\Services\SupplierService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 final class SupplierController extends ApiController
 {
+    public function __construct(
+        private readonly SupplierService $supplierService,
+    ) {}
+
     /**
      * List suppliers.
      *
@@ -27,14 +32,7 @@ final class SupplierController extends ApiController
             'page'     => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $suppliers = Supplier::query()
-            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
-                ->orWhere('email', 'like', "%{$s}%")
-                ->orWhere('phone', 'like', "%{$s}%")
-                ->orWhere('city', 'like', "%{$s}%"))
-            ->paginate($perPage);
+        $suppliers = $this->supplierService->list($filters);
 
         return $this->success(SupplierResource::collection($suppliers)->toResponse($request)->getData(true));
     }
@@ -46,7 +44,7 @@ final class SupplierController extends ApiController
      */
     public function store(StoreSupplierRequest $request): JsonResponse
     {
-        $supplier = Supplier::query()->create($request->validated());
+        $supplier = $this->supplierService->create($request->validated());
 
         return $this->created(new SupplierResource($supplier));
     }
@@ -68,7 +66,7 @@ final class SupplierController extends ApiController
      */
     public function update(UpdateSupplierRequest $request, Supplier $supplier): JsonResponse
     {
-        $supplier->update($request->validated());
+        $supplier = $this->supplierService->update($supplier, $request->validated());
 
         return $this->success(new SupplierResource($supplier));
     }
@@ -80,7 +78,7 @@ final class SupplierController extends ApiController
      */
     public function destroy(Supplier $supplier): JsonResponse
     {
-        $supplier->delete();
+        $this->supplierService->delete($supplier);
 
         return $this->noContent();
     }

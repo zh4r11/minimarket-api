@@ -24,7 +24,7 @@ final class UpdateProductVariantRequest extends FormRequest
         $id = is_object($model) ? $model->id : $model;
 
         return [
-            'parent_id' => ['sometimes', 'integer', 'exists:products,id'],
+            'parent_id' => ['sometimes', 'integer', Rule::exists('products', 'id')->where('type', 'parent')],
             'sku' => ['sometimes', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($id)],
             'name' => ['nullable', 'string', 'max:255'],
             'buy_price' => ['sometimes', 'numeric', 'min:0'],

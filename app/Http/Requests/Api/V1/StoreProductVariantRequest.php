@@ -6,6 +6,7 @@ namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class StoreProductVariantRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ final class StoreProductVariantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'parent_id' => ['required', 'integer', 'exists:products,id'],
+            'parent_id' => ['required', 'integer', Rule::exists('products', 'id')->where('type', 'parent')],
             'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
             'name' => ['nullable', 'string', 'max:255'],
             'buy_price' => ['required', 'numeric', 'min:0'],

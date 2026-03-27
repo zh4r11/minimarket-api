@@ -9,14 +9,16 @@ use App\Http\Requests\Api\V1\StorePurchaseRequest;
 use App\Http\Requests\Api\V1\UpdatePurchaseRequest;
 use App\Http\Resources\PurchaseResource;
 use App\Models\Purchase;
-use App\Models\PurchaseItem;
-use App\Services\InvoiceNumberService;
+use App\Services\PurchaseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 final class PurchaseController extends ApiController
 {
+    public function __construct(
+        private readonly PurchaseService $purchaseService,
+    ) {}
+
     /**
      * List purchases.
      *
@@ -32,15 +34,7 @@ final class PurchaseController extends ApiController
             'page'        => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $purchases = Purchase::query()
-            ->with(['supplier', 'items.product'])
-            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('invoice_number', 'like', "%{$s}%")
-                ->orWhere('notes', 'like', "%{$s}%"))
-            ->when($filters['supplier_id'] ?? null, fn ($q) => $q->where('supplier_id', $filters['supplier_id']))
-            ->when($filters['status'] ?? null, fn ($q) => $q->where('status', $filters['status']))
-            ->paginate($perPage);
+        $purchases = $this->purchaseService->list($filters);
 
         return $this->success(PurchaseResource::collection($purchases)->toResponse($request)->getData(true));
     }
@@ -53,38 +47,7 @@ final class PurchaseController extends ApiController
      */
     public function store(StorePurchaseRequest $request): JsonResponse
     {
-        $purchase = DB::transaction(function () use ($request): Purchase {
-            $validated = $request->validated();
-
-            $purchase = Purchase::query()->create([
-                'supplier_id' => $validated['supplier_id'] ?? null,
-                'invoice_number' => (new InvoiceNumberService)->generatePurchaseNumber(),
-                'purchase_date' => $validated['purchase_date'],
-                'notes' => $validated['notes'] ?? null,
-                'status' => $validated['status'] ?? 'draft',
-                'total_amount' => 0,
-            ]);
-
-            $totalAmount = 0;
-
-            foreach ($validated['items'] as $item) {
-                $subtotal = $item['quantity'] * $item['buy_price'];
-                $totalAmount += $subtotal;
-
-                PurchaseItem::query()->create([
-                    'purchase_id' => $purchase->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'buy_price' => $item['buy_price'],
-                    'subtotal' => $subtotal,
-                ]);
-            }
-
-            $purchase->update(['total_amount' => $totalAmount]);
-            $purchase->load(['supplier', 'items.product']);
-
-            return $purchase;
-        });
+        $purchase = $this->purchaseService->create($request->validated());
 
         return $this->created(new PurchaseResource($purchase));
     }
@@ -96,7 +59,7 @@ final class PurchaseController extends ApiController
      */
     public function show(Purchase $purchase): JsonResponse
     {
-        $purchase->load(['supplier', 'items.product']);
+        $purchase = $this->purchaseService->show($purchase);
 
         return $this->success(new PurchaseResource($purchase));
     }
@@ -108,8 +71,7 @@ final class PurchaseController extends ApiController
      */
     public function update(UpdatePurchaseRequest $request, Purchase $purchase): JsonResponse
     {
-        $purchase->update($request->validated());
-        $purchase->load(['supplier', 'items.product']);
+        $purchase = $this->purchaseService->update($purchase, $request->validated());
 
         return $this->success(new PurchaseResource($purchase));
     }
@@ -121,7 +83,7 @@ final class PurchaseController extends ApiController
      */
     public function destroy(Purchase $purchase): JsonResponse
     {
-        $purchase->delete();
+        $this->purchaseService->delete($purchase);
 
         return $this->noContent();
     }

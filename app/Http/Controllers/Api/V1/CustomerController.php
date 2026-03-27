@@ -9,11 +9,16 @@ use App\Http\Requests\Api\V1\StoreCustomerRequest;
 use App\Http\Requests\Api\V1\UpdateCustomerRequest;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
+use App\Services\CustomerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 final class CustomerController extends ApiController
 {
+    public function __construct(
+        private readonly CustomerService $customerService,
+    ) {}
+
     /**
      * List customers.
      *
@@ -28,22 +33,14 @@ final class CustomerController extends ApiController
             'page'      => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $customers = Customer::query()
-            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
-                ->orWhere('email', 'like', "%{$s}%")
-                ->orWhere('phone', 'like', "%{$s}%")
-                ->orWhere('city', 'like', "%{$s}%"))
-            ->when(array_key_exists('is_active', $filters), fn ($q) => $q->where('is_active', $filters['is_active']))
-            ->paginate($perPage);
+        $customers = $this->customerService->list($filters);
 
         return $this->success(CustomerResource::collection($customers)->toResponse($request)->getData(true));
     }
 
     public function store(StoreCustomerRequest $request): JsonResponse
     {
-        $customer = Customer::query()->create($request->validated());
+        $customer = $this->customerService->create($request->validated());
 
         return $this->created(new CustomerResource($customer));
     }
@@ -55,14 +52,14 @@ final class CustomerController extends ApiController
 
     public function update(UpdateCustomerRequest $request, Customer $customer): JsonResponse
     {
-        $customer->update($request->validated());
+        $customer = $this->customerService->update($customer, $request->validated());
 
         return $this->success(new CustomerResource($customer));
     }
 
     public function destroy(Customer $customer): JsonResponse
     {
-        $customer->delete();
+        $this->customerService->delete($customer);
 
         return $this->noContent();
     }

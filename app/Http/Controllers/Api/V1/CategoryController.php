@@ -9,12 +9,16 @@ use App\Http\Requests\Api\V1\StoreCategoryRequest;
 use App\Http\Requests\Api\V1\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 final class CategoryController extends ApiController
 {
+    public function __construct(
+        private readonly CategoryService $categoryService,
+    ) {}
+
     /**
      * List categories.
      *
@@ -29,14 +33,7 @@ final class CategoryController extends ApiController
             'page'      => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $categories = Category::query()
-            ->with(['parent', 'children'])
-            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
-                ->orWhere('description', 'like', "%{$s}%"))
-            ->when($filters['parent_id'] ?? null, fn ($q) => $q->where('parent_id', $filters['parent_id']))
-            ->paginate($perPage);
+        $categories = $this->categoryService->list($filters);
 
         return $this->success(CategoryResource::collection($categories)->toResponse($request)->getData(true));
     }
@@ -48,10 +45,7 @@ final class CategoryController extends ApiController
      */
     public function store(StoreCategoryRequest $request): JsonResponse
     {
-        $category = Category::query()->create([
-            ...$request->validated(),
-            'slug' => Str::slug($request->name),
-        ]);
+        $category = $this->categoryService->create($request->validated());
 
         return $this->created(new CategoryResource($category));
     }
@@ -63,7 +57,7 @@ final class CategoryController extends ApiController
      */
     public function show(Category $category): JsonResponse
     {
-        $category->load(['parent', 'children']);
+        $category = $this->categoryService->show($category);
 
         return $this->success(new CategoryResource($category));
     }
@@ -75,13 +69,7 @@ final class CategoryController extends ApiController
      */
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
-        $data = $request->validated();
-
-        if (isset($data['name'])) {
-            $data['slug'] = Str::slug($data['name']);
-        }
-
-        $category->update($data);
+        $category = $this->categoryService->update($category, $request->validated());
 
         return $this->success(new CategoryResource($category));
     }
@@ -93,7 +81,7 @@ final class CategoryController extends ApiController
      */
     public function destroy(Category $category): JsonResponse
     {
-        $category->delete();
+        $this->categoryService->delete($category);
 
         return $this->noContent();
     }

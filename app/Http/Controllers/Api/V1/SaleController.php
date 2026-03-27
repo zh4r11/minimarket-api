@@ -9,14 +9,16 @@ use App\Http\Requests\Api\V1\StoreSaleRequest;
 use App\Http\Requests\Api\V1\UpdateSaleRequest;
 use App\Http\Resources\SaleResource;
 use App\Models\Sale;
-use App\Models\SaleItem;
-use App\Services\InvoiceNumberService;
+use App\Services\SaleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 final class SaleController extends ApiController
 {
+    public function __construct(
+        private readonly SaleService $saleService,
+    ) {}
+
     /**
      * List sales.
      *
@@ -32,15 +34,7 @@ final class SaleController extends ApiController
             'page'           => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $sales = Sale::query()
-            ->with(['cashier', 'items.product'])
-            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('invoice_number', 'like', "%{$s}%")
-                ->orWhere('notes', 'like', "%{$s}%"))
-            ->when($filters['status'] ?? null, fn ($q) => $q->where('status', $filters['status']))
-            ->when($filters['payment_method'] ?? null, fn ($q) => $q->where('payment_method', $filters['payment_method']))
-            ->paginate($perPage);
+        $sales = $this->saleService->list($filters);
 
         return $this->success(SaleResource::collection($sales)->toResponse($request)->getData(true));
     }
@@ -53,54 +47,7 @@ final class SaleController extends ApiController
      */
     public function store(StoreSaleRequest $request): JsonResponse
     {
-        $sale = DB::transaction(function () use ($request): Sale {
-            $validated = $request->validated();
-
-            $sale = Sale::query()->create([
-                'invoice_number' => (new InvoiceNumberService)->generateSaleNumber(),
-                'sale_date' => $validated['sale_date'],
-                'discount_amount' => $validated['discount_amount'] ?? 0,
-                'tax_amount' => $validated['tax_amount'] ?? 0,
-                'paid_amount' => $validated['paid_amount'],
-                'notes' => $validated['notes'] ?? null,
-                'payment_method' => $validated['payment_method'] ?? 'cash',
-                'status' => $validated['status'] ?? 'draft',
-                'cashier_id' => auth()->id(),
-                'total_amount' => 0,
-                'change_amount' => 0,
-            ]);
-
-            $totalAmount = 0;
-
-            foreach ($validated['items'] as $item) {
-                $itemDiscount = $item['discount'] ?? 0;
-                $subtotal = ($item['quantity'] * $item['sell_price']) - $itemDiscount;
-                $totalAmount += $subtotal;
-
-                SaleItem::query()->create([
-                    'sale_id' => $sale->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'sell_price' => $item['sell_price'],
-                    'discount' => $itemDiscount,
-                    'subtotal' => $subtotal,
-                ]);
-            }
-
-            $discountAmount = $validated['discount_amount'] ?? 0;
-            $taxAmount = $validated['tax_amount'] ?? 0;
-            $paidAmount = $validated['paid_amount'];
-            $changeAmount = $paidAmount - ($totalAmount + $taxAmount - $discountAmount);
-
-            $sale->update([
-                'total_amount' => $totalAmount,
-                'change_amount' => $changeAmount,
-            ]);
-
-            $sale->load(['cashier', 'items.product']);
-
-            return $sale;
-        });
+        $sale = $this->saleService->create($request->validated());
 
         return $this->created(new SaleResource($sale));
     }
@@ -112,7 +59,7 @@ final class SaleController extends ApiController
      */
     public function show(Sale $sale): JsonResponse
     {
-        $sale->load(['cashier', 'items.product']);
+        $sale = $this->saleService->show($sale);
 
         return $this->success(new SaleResource($sale));
     }
@@ -124,7 +71,7 @@ final class SaleController extends ApiController
      */
     public function update(UpdateSaleRequest $request, Sale $sale): JsonResponse
     {
-        $sale->update($request->validated());
+        $sale = $this->saleService->update($sale, $request->validated());
 
         return $this->success(new SaleResource($sale));
     }
@@ -136,7 +83,7 @@ final class SaleController extends ApiController
      */
     public function destroy(Sale $sale): JsonResponse
     {
-        $sale->delete();
+        $this->saleService->delete($sale);
 
         return $this->noContent();
     }

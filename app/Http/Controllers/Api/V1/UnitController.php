@@ -9,11 +9,16 @@ use App\Http\Requests\Api\V1\StoreUnitRequest;
 use App\Http\Requests\Api\V1\UpdateUnitRequest;
 use App\Http\Resources\UnitResource;
 use App\Models\Unit;
+use App\Services\UnitService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 final class UnitController extends ApiController
 {
+    public function __construct(
+        private readonly UnitService $unitService,
+    ) {}
+
     /**
      * List units.
      *
@@ -27,12 +32,7 @@ final class UnitController extends ApiController
             'page'     => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $units = Unit::query()
-            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
-                ->orWhere('symbol', 'like', "%{$s}%"))
-            ->paginate($perPage);
+        $units = $this->unitService->list($filters);
 
         return $this->success(UnitResource::collection($units)->toResponse($request)->getData(true));
     }
@@ -44,7 +44,7 @@ final class UnitController extends ApiController
      */
     public function store(StoreUnitRequest $request): JsonResponse
     {
-        $unit = Unit::query()->create($request->validated());
+        $unit = $this->unitService->create($request->validated());
 
         return $this->created(new UnitResource($unit));
     }
@@ -66,7 +66,7 @@ final class UnitController extends ApiController
      */
     public function update(UpdateUnitRequest $request, Unit $unit): JsonResponse
     {
-        $unit->update($request->validated());
+        $unit = $this->unitService->update($unit, $request->validated());
 
         return $this->success(new UnitResource($unit));
     }
@@ -78,7 +78,7 @@ final class UnitController extends ApiController
      */
     public function destroy(Unit $unit): JsonResponse
     {
-        $unit->delete();
+        $this->unitService->delete($unit);
 
         return $this->noContent();
     }

@@ -112,6 +112,12 @@ final class Product extends Model
         return $this->hasMany(ProductVariant::class, 'parent_id');
     }
 
+    /** @return HasMany<BundleItem, $this> */
+    public function bundleItems(): HasMany
+    {
+        return $this->hasMany(BundleItem::class, 'bundle_id');
+    }
+
     /** @return BelongsToMany<ProductVariantAttributeValue, $this> */
     public function attributeValues(): BelongsToMany
     {

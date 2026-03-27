@@ -8,12 +8,16 @@ use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\V1\AssignRoleRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 
 final class UserController extends ApiController
 {
+    public function __construct(
+        private readonly UserService $userService,
+    ) {}
+
     /**
      * List all users.
      *
@@ -26,11 +30,7 @@ final class UserController extends ApiController
             'page'     => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $users = User::query()
-            ->with('roles')
-            ->paginate($perPage);
+        $users = $this->userService->list($filters);
 
         return $this->success(UserResource::collection($users)->toResponse($request)->getData(true));
     }
@@ -42,7 +42,7 @@ final class UserController extends ApiController
      */
     public function show(User $user): JsonResponse
     {
-        $user->load('roles');
+        $user = $this->userService->show($user);
 
         return $this->success(new UserResource($user));
     }
@@ -54,7 +54,7 @@ final class UserController extends ApiController
      */
     public function roles(): JsonResponse
     {
-        $roles = Role::query()->select(['id', 'name'])->get();
+        $roles = $this->userService->roles();
 
         return $this->success($roles);
     }
@@ -68,8 +68,7 @@ final class UserController extends ApiController
      */
     public function assignRole(AssignRoleRequest $request, User $user): JsonResponse
     {
-        $user->assignRole($request->validated('role'));
-        $user->load('roles');
+        $user = $this->userService->assignRole($user, $request->validated('role'));
 
         return $this->success(new UserResource($user), 'Role assigned successfully.');
     }
@@ -83,13 +82,12 @@ final class UserController extends ApiController
      */
     public function removeRole(User $user, string $role): JsonResponse
     {
-        if (! $user->hasRole($role)) {
-            return $this->error('User does not have this role.', 422);
+        $result = $this->userService->removeRole($user, $role);
+
+        if (! $result['success']) {
+            return $this->error($result['message'], 422);
         }
 
-        $user->removeRole($role);
-        $user->load('roles');
-
-        return $this->success(new UserResource($user), 'Role removed successfully.');
+        return $this->success(new UserResource($user), $result['message']);
     }
 }

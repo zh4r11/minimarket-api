@@ -9,11 +9,16 @@ use App\Http\Requests\Api\V1\StoreBundleRequest;
 use App\Http\Requests\Api\V1\UpdateBundleRequest;
 use App\Http\Resources\BundleResource;
 use App\Models\Bundle;
+use App\Services\BundleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 final class BundleController extends ApiController
 {
+    public function __construct(
+        private readonly BundleService $bundleService,
+    ) {}
+
     /**
      * List bundles.
      *
@@ -28,14 +33,7 @@ final class BundleController extends ApiController
             'page'      => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $bundles = Bundle::query()
-            ->with(['items.product', 'items.productVariant'])
-            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
-                ->orWhere('sku', 'like', "%{$s}%"))
-            ->when(array_key_exists('is_active', $filters), fn ($q) => $q->where('is_active', $filters['is_active']))
-            ->paginate($perPage);
+        $bundles = $this->bundleService->list($filters);
 
         return $this->success(BundleResource::collection($bundles)->toResponse($request)->getData(true));
     }
@@ -47,13 +45,7 @@ final class BundleController extends ApiController
      */
     public function store(StoreBundleRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $items = $data['items'];
-        unset($data['items']);
-
-        $bundle = Bundle::query()->create($data);
-        $bundle->items()->createMany($items);
-        $bundle->load(['items.product', 'items.productVariant']);
+        $bundle = $this->bundleService->create($request->validated());
 
         return $this->created(new BundleResource($bundle));
     }
@@ -65,7 +57,7 @@ final class BundleController extends ApiController
      */
     public function show(Bundle $bundle): JsonResponse
     {
-        $bundle->load(['items.product', 'items.productVariant']);
+        $bundle->load(['items.product']);
 
         return $this->success(new BundleResource($bundle));
     }
@@ -77,18 +69,7 @@ final class BundleController extends ApiController
      */
     public function update(UpdateBundleRequest $request, Bundle $bundle): JsonResponse
     {
-        $data = $request->validated();
-        $items = $data['items'] ?? null;
-        unset($data['items']);
-
-        $bundle->update($data);
-
-        if ($items !== null) {
-            $bundle->items()->delete();
-            $bundle->items()->createMany($items);
-        }
-
-        $bundle->load(['items.product', 'items.productVariant']);
+        $bundle = $this->bundleService->update($bundle, $request->validated());
 
         return $this->success(new BundleResource($bundle));
     }
@@ -100,7 +81,7 @@ final class BundleController extends ApiController
      */
     public function destroy(Bundle $bundle): JsonResponse
     {
-        $bundle->delete();
+        $this->bundleService->delete($bundle);
 
         return $this->noContent();
     }

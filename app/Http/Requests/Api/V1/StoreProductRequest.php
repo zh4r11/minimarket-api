@@ -6,6 +6,7 @@ namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class StoreProductRequest extends FormRequest
 {
@@ -20,6 +21,7 @@ final class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'type' => ['sometimes', 'string', Rule::in(['single', 'parent'])],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
             'unit_id' => ['nullable', 'integer', 'exists:units,id'],

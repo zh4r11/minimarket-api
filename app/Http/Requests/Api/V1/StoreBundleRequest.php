@@ -20,14 +20,13 @@ final class StoreBundleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sku' => ['required', 'string', 'max:100', 'unique:bundles,sku'],
+            'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'sell_price' => ['required', 'numeric', 'min:0'],
             'is_active' => ['boolean'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.product_id' => ['nullable', 'integer', 'exists:products,id'],
-            'items.*.product_variant_id' => ['nullable', 'integer', 'exists:products,id'],
+            'items.*.product_id' => ['required', 'integer', 'exists:products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
         ];
     }

@@ -8,13 +8,15 @@ use App\Http\Controllers\Api\ApiController;
 use App\Http\Resources\ProductPhotoResource;
 use App\Models\Product;
 use App\Models\ProductPhoto;
+use App\Services\ProductPhotoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 final class ProductPhotoController extends ApiController
 {
-    private const MAX_PHOTOS = 5;
+    public function __construct(
+        private readonly ProductPhotoService $productPhotoService,
+    ) {}
 
     /**
      * Upload photos for a product.
@@ -28,30 +30,20 @@ final class ProductPhotoController extends ApiController
             'photos.*' => ['required', 'image', 'max:2048'],
         ]);
 
-        $existingCount = $product->photos()->count();
         $newCount = count($request->file('photos', []));
 
-        if ($existingCount + $newCount > self::MAX_PHOTOS) {
+        if (! $this->productPhotoService->canUpload($product, $newCount)) {
+            $existingCount = $this->productPhotoService->getExistingCount($product);
+            $maxPhotos = $this->productPhotoService->getMaxPhotos($product);
+
             return $this->error(
-                "Produk hanya dapat memiliki maksimal ".self::MAX_PHOTOS." foto. Saat ini sudah ada {$existingCount} foto."
+                "Produk hanya dapat memiliki maksimal {$maxPhotos} foto. Saat ini sudah ada {$existingCount} foto."
             );
         }
 
-        $nextOrder = $existingCount;
-        $isFirstBatch = $existingCount === 0;
+        $photos = $this->productPhotoService->upload($product, $request->file('photos'));
 
-        foreach ($request->file('photos') as $index => $file) {
-            $path = $file->store('product-photos', 'public');
-            $product->photos()->create([
-                'path' => $path,
-                'sort_order' => $nextOrder++,
-                'is_main' => $isFirstBatch && $index === 0,
-            ]);
-        }
-
-        $product->load('photos');
-
-        return $this->success(ProductPhotoResource::collection($product->photos));
+        return $this->success(ProductPhotoResource::collection($photos));
     }
 
     /**
@@ -67,11 +59,10 @@ final class ProductPhotoController extends ApiController
 
         $wasMain = $photo->is_main;
 
-        Storage::disk('public')->delete($photo->path);
-        $photo->delete();
+        $this->productPhotoService->destroyPhoto($photo);
 
         if ($wasMain) {
-            $product->photos()->orderBy('sort_order')->first()?->update(['is_main' => true]);
+            $this->productPhotoService->promoteNextMain($product);
         }
 
         return $this->noContent();
@@ -88,11 +79,8 @@ final class ProductPhotoController extends ApiController
             return $this->forbidden('Foto ini tidak milik produk yang dimaksud.');
         }
 
-        $product->photos()->update(['is_main' => false]);
-        $photo->update(['is_main' => true]);
+        $photos = $this->productPhotoService->setMainPhoto($product, $photo);
 
-        $product->load('photos');
-
-        return $this->success(ProductPhotoResource::collection($product->photos));
+        return $this->success(ProductPhotoResource::collection($photos));
     }
 }

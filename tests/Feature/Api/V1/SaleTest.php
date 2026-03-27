@@ -26,7 +26,6 @@ describe('Sales', function (): void {
         $user = User::factory()->create();
         $product = Product::factory()->create();
         $this->actingAs($user)->postJson('/api/v1/sales', [
-            'invoice_number' => 'INV-0001',
             'sale_date' => '2025-01-01',
             'paid_amount' => 20000,
             'items' => [
@@ -37,8 +36,8 @@ describe('Sales', function (): void {
                 ],
             ],
         ])->assertStatus(201)
-          ->assertJsonPath('data.invoice_number', 'INV-0001');
-        $this->assertDatabaseHas('sales', ['invoice_number' => 'INV-0001']);
+          ->assertJsonPath('success', true);
+        $this->assertDatabaseCount('sales', 1);
     });
 
     it('shows a sale', function (): void {

@@ -22,10 +22,8 @@ final class BundleItemResource extends JsonResource
             'id' => $this->id,
             'bundle_id' => $this->bundle_id,
             'product_id' => $this->product_id,
-            'product_variant_id' => $this->product_variant_id,
             'quantity' => $this->quantity,
             'product' => $this->whenLoaded('product', fn () => new ProductResource($this->product)),
-            'product_variant' => $this->whenLoaded('productVariant', fn () => new ProductVariantResource($this->productVariant)),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

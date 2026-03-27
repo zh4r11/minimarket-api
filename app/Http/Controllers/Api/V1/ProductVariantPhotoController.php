@@ -8,13 +8,15 @@ use App\Http\Controllers\Api\ApiController;
 use App\Http\Resources\ProductPhotoResource;
 use App\Models\ProductPhoto;
 use App\Models\ProductVariant;
+use App\Services\ProductPhotoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 final class ProductVariantPhotoController extends ApiController
 {
-    private const MAX_PHOTOS = 2;
+    public function __construct(
+        private readonly ProductPhotoService $productPhotoService,
+    ) {}
 
     /**
      * Upload photos for a product variant.
@@ -28,30 +30,20 @@ final class ProductVariantPhotoController extends ApiController
             'photos.*' => ['required', 'image', 'max:2048'],
         ]);
 
-        $existingCount = $productVariant->photos()->count();
         $newCount = count($request->file('photos', []));
 
-        if ($existingCount + $newCount > self::MAX_PHOTOS) {
+        if (! $this->productPhotoService->canUpload($productVariant, $newCount)) {
+            $existingCount = $this->productPhotoService->getExistingCount($productVariant);
+            $maxPhotos = $this->productPhotoService->getMaxPhotos($productVariant);
+
             return $this->error(
-                "Varian hanya dapat memiliki maksimal ".self::MAX_PHOTOS." foto. Saat ini sudah ada {$existingCount} foto."
+                "Varian hanya dapat memiliki maksimal {$maxPhotos} foto. Saat ini sudah ada {$existingCount} foto."
             );
         }
 
-        $nextOrder = $existingCount;
-        $isFirstBatch = $existingCount === 0;
+        $photos = $this->productPhotoService->upload($productVariant, $request->file('photos'));
 
-        foreach ($request->file('photos') as $index => $file) {
-            $path = $file->store('product-variant-photos', 'public');
-            $productVariant->photos()->create([
-                'path' => $path,
-                'sort_order' => $nextOrder++,
-                'is_main' => $isFirstBatch && $index === 0,
-            ]);
-        }
-
-        $productVariant->load('photos');
-
-        return $this->success(ProductPhotoResource::collection($productVariant->photos));
+        return $this->success(ProductPhotoResource::collection($photos));
     }
 
     /**
@@ -67,11 +59,10 @@ final class ProductVariantPhotoController extends ApiController
 
         $wasMain = $photo->is_main;
 
-        Storage::disk('public')->delete($photo->path);
-        $photo->delete();
+        $this->productPhotoService->destroyPhoto($photo);
 
         if ($wasMain) {
-            $productVariant->photos()->orderBy('sort_order')->first()?->update(['is_main' => true]);
+            $this->productPhotoService->promoteNextMain($productVariant);
         }
 
         return $this->noContent();
@@ -88,11 +79,8 @@ final class ProductVariantPhotoController extends ApiController
             return $this->forbidden('Foto ini tidak milik varian yang dimaksud.');
         }
 
-        $productVariant->photos()->update(['is_main' => false]);
-        $photo->update(['is_main' => true]);
+        $photos = $this->productPhotoService->setMainPhoto($productVariant, $photo);
 
-        $productVariant->load('photos');
-
-        return $this->success(ProductPhotoResource::collection($productVariant->photos));
+        return $this->success(ProductPhotoResource::collection($photos));
     }
 }

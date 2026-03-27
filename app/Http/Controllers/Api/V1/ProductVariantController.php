@@ -9,11 +9,16 @@ use App\Http\Requests\Api\V1\StoreProductVariantRequest;
 use App\Http\Requests\Api\V1\UpdateProductVariantRequest;
 use App\Http\Resources\ProductVariantResource;
 use App\Models\ProductVariant;
+use App\Services\ProductVariantService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 final class ProductVariantController extends ApiController
 {
+    public function __construct(
+        private readonly ProductVariantService $productVariantService,
+    ) {}
+
     /**
      * List product variants.
      *
@@ -29,14 +34,7 @@ final class ProductVariantController extends ApiController
             'page'      => 'nullable|integer|min:1',
         ]);
 
-        $perPage = min($filters['per_page'] ?? 15, 100);
-
-        $variants = ProductVariant::query()
-            ->with(['parent', 'attributeValues.attribute', 'photos'])
-            ->when($filters['parent_id'] ?? null, fn ($q) => $q->where('parent_id', $filters['parent_id']))
-            ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('sku', 'like', "%{$s}%"))
-            ->when(array_key_exists('is_active', $filters), fn ($q) => $q->where('is_active', $filters['is_active']))
-            ->paginate($perPage);
+        $variants = $this->productVariantService->list($filters);
 
         return $this->success(ProductVariantResource::collection($variants)->toResponse($request)->getData(true));
     }
@@ -48,17 +46,7 @@ final class ProductVariantController extends ApiController
      */
     public function store(StoreProductVariantRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $attributeValueIds = $data['attribute_value_ids'] ?? [];
-        unset($data['attribute_value_ids']);
-
-        $variant = ProductVariant::query()->create($data);
-
-        if ($attributeValueIds !== []) {
-            $variant->attributeValues()->sync($attributeValueIds);
-        }
-
-        $variant->load(['parent', 'attributeValues.attribute', 'photos']);
+        $variant = $this->productVariantService->create($request->validated());
 
         return $this->created(new ProductVariantResource($variant));
     }
@@ -70,7 +58,7 @@ final class ProductVariantController extends ApiController
      */
     public function show(ProductVariant $productVariant): JsonResponse
     {
-        $productVariant->load(['parent', 'attributeValues.attribute', 'photos']);
+        $productVariant = $this->productVariantService->show($productVariant);
 
         return $this->success(new ProductVariantResource($productVariant));
     }
@@ -82,17 +70,7 @@ final class ProductVariantController extends ApiController
      */
     public function update(UpdateProductVariantRequest $request, ProductVariant $productVariant): JsonResponse
     {
-        $data = $request->validated();
-        $attributeValueIds = $data['attribute_value_ids'] ?? null;
-        unset($data['attribute_value_ids']);
-
-        $productVariant->update($data);
-
-        if ($attributeValueIds !== null) {
-            $productVariant->attributeValues()->sync($attributeValueIds);
-        }
-
-        $productVariant->load(['parent', 'attributeValues.attribute', 'photos']);
+        $productVariant = $this->productVariantService->update($productVariant, $request->validated());
 
         return $this->success(new ProductVariantResource($productVariant));
     }
@@ -104,7 +82,7 @@ final class ProductVariantController extends ApiController
      */
     public function destroy(ProductVariant $productVariant): JsonResponse
     {
-        $productVariant->delete();
+        $this->productVariantService->delete($productVariant);
 
         return $this->noContent();
     }

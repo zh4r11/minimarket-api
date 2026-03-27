@@ -117,8 +117,8 @@ return new class extends Migration
             $pvvFks     = collect(Schema::getForeignKeys('product_variant_values'))->pluck('name');
             $pvvIndexes = collect(Schema::getIndexes('product_variant_values'))->pluck('name');
 
-            $hasFkOnProductId     = $pvvFks->contains(fn ($n) => str_contains($n, 'product_id'));
-            $hasUniqueOnProductId = $pvvIndexes->contains(fn ($n) => str_contains($n, 'product_id'));
+            $hasFkOnProductId     = $pvvFks->contains(fn ($n) => str_contains((string) ($n ?? ''), 'product_id'));
+            $hasUniqueOnProductId = $pvvIndexes->contains(fn ($n) => str_contains((string) ($n ?? ''), 'product_id'));
 
             if (! $hasFkOnProductId || ! $hasUniqueOnProductId) {
                 Schema::table('product_variant_values', function (Blueprint $table) use ($hasFkOnProductId, $hasUniqueOnProductId): void {
@@ -139,14 +139,14 @@ return new class extends Migration
         if (Schema::hasTable('product_variants')) {
             $bundleFks = collect(Schema::getForeignKeys('bundle_items'))->pluck('name');
 
-            if ($bundleFks->contains(fn ($n) => str_contains($n, 'product_variant_id'))) {
+            if ($bundleFks->contains(fn ($n) => str_contains((string) ($n ?? ''), 'product_variant_id'))) {
                 Schema::table('bundle_items', function (Blueprint $table): void {
                     $table->dropForeign(['product_variant_id']);
                 });
             }
 
             $bundleIndexes = collect(Schema::getIndexes('bundle_items'))->pluck('name');
-            if ($bundleIndexes->contains(fn ($n) => str_contains($n, 'product_variant_id'))) {
+            if ($bundleIndexes->contains(fn ($n) => str_contains((string) ($n ?? ''), 'product_variant_id'))) {
                 Schema::table('bundle_items', function (Blueprint $table): void {
                     $table->dropIndex(['product_variant_id']);
                 });
@@ -158,7 +158,7 @@ return new class extends Migration
 
         // 9. Re-add bundle_items.product_variant_id FK pointing to products (if not already done)
         $bundleFksAfter = collect(Schema::getForeignKeys('bundle_items'))->pluck('name');
-        if (! $bundleFksAfter->contains(fn ($n) => str_contains($n, 'product_variant_id'))) {
+        if (! $bundleFksAfter->contains(fn ($n) => str_contains((string) ($n ?? ''), 'product_variant_id'))) {
             Schema::table('bundle_items', function (Blueprint $table): void {
                 $table->foreign('product_variant_id')->references('id')->on('products')->nullOnDelete();
                 $table->index('product_variant_id');

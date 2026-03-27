@@ -9,11 +9,16 @@ use App\Http\Requests\Api\V1\StoreProductVariantAttributeValueRequest;
 use App\Http\Requests\Api\V1\UpdateProductVariantAttributeValueRequest;
 use App\Http\Resources\ProductVariantAttributeValueResource;
 use App\Models\ProductVariantAttributeValue;
+use App\Services\ProductVariantAttributeValueService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 final class ProductVariantAttributeValueController extends ApiController
 {
+    public function __construct(
+        private readonly ProductVariantAttributeValueService $valueService,
+    ) {}
+
     /**
      * List variant attribute values.
      *
@@ -26,13 +31,14 @@ final class ProductVariantAttributeValueController extends ApiController
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = min($request->integer('per_page', 15), 100);
+        $filters = $request->validate([
+            'attribute_id' => 'nullable|integer|exists:product_variant_attributes,id',
+            'search'       => 'nullable|string',
+            'per_page'     => 'nullable|integer|min:1|max:100',
+            'page'         => 'nullable|integer|min:1',
+        ]);
 
-        $values = ProductVariantAttributeValue::query()
-            ->with('attribute')
-            ->when($request->attribute_id, fn ($q) => $q->where('attribute_id', $request->attribute_id))
-            ->when($request->search, fn ($q) => $q->where('value', 'like', "%{$request->search}%"))
-            ->paginate($perPage);
+        $values = $this->valueService->list($filters);
 
         return $this->success(ProductVariantAttributeValueResource::collection($values)->toResponse($request)->getData(true));
     }
@@ -44,8 +50,7 @@ final class ProductVariantAttributeValueController extends ApiController
      */
     public function store(StoreProductVariantAttributeValueRequest $request): JsonResponse
     {
-        $value = ProductVariantAttributeValue::query()->create($request->validated());
-        $value->load('attribute');
+        $value = $this->valueService->create($request->validated());
 
         return $this->created(new ProductVariantAttributeValueResource($value));
     }
@@ -57,7 +62,7 @@ final class ProductVariantAttributeValueController extends ApiController
      */
     public function show(ProductVariantAttributeValue $productVariantAttributeValue): JsonResponse
     {
-        $productVariantAttributeValue->load('attribute');
+        $productVariantAttributeValue = $this->valueService->show($productVariantAttributeValue);
 
         return $this->success(new ProductVariantAttributeValueResource($productVariantAttributeValue));
     }
@@ -69,8 +74,7 @@ final class ProductVariantAttributeValueController extends ApiController
      */
     public function update(UpdateProductVariantAttributeValueRequest $request, ProductVariantAttributeValue $productVariantAttributeValue): JsonResponse
     {
-        $productVariantAttributeValue->update($request->validated());
-        $productVariantAttributeValue->load('attribute');
+        $productVariantAttributeValue = $this->valueService->update($productVariantAttributeValue, $request->validated());
 
         return $this->success(new ProductVariantAttributeValueResource($productVariantAttributeValue));
     }
@@ -82,7 +86,7 @@ final class ProductVariantAttributeValueController extends ApiController
      */
     public function destroy(ProductVariantAttributeValue $productVariantAttributeValue): JsonResponse
     {
-        $productVariantAttributeValue->delete();
+        $this->valueService->delete($productVariantAttributeValue);
 
         return $this->noContent();
     }
