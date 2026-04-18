@@ -18,7 +18,7 @@ final class ReportService
      */
     public function stockReport(array $filters): LengthAwarePaginator
     {
-        $perPage = min($filters['per_page'] ?? 15, 100);
+        $perPage = min((int) ($filters['per_page'] ?? 15), 100);
 
         return $this->productRepository->stockReport($filters, $perPage);
     }

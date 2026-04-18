@@ -19,7 +19,7 @@ final class SupplierService
      */
     public function list(array $filters): LengthAwarePaginator
     {
-        $perPage = min($filters['per_page'] ?? 15, 100);
+        $perPage = min((int) ($filters['per_page'] ?? 15), 100);
 
         return $this->supplierRepository->paginate($filters, $perPage);
     }
