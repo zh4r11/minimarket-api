@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Product;
 use App\Models\ProductPhoto;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -19,24 +18,24 @@ final class ProductPhotoService
      * @param  array<int, UploadedFile>  $photos
      * @return Collection<int, ProductPhoto>
      */
-    public function upload(Product $product, array $photos): Collection
+    public function upload(Model $owner, array $photos): Collection
     {
-        $existingCount = $product->photos()->count();
+        $existingCount = $owner->photos()->count();
         $nextOrder = $existingCount;
         $isFirstBatch = $existingCount === 0;
 
         foreach ($photos as $index => $file) {
             $path = $file->store('product-photos', 'public');
-            $product->photos()->create([
+            $owner->photos()->create([
                 'path' => $path,
                 'sort_order' => $nextOrder++,
                 'is_main' => $isFirstBatch && $index === 0,
             ]);
         }
 
-        $product->load('photos');
+        $owner->load('photos');
 
-        return $product->photos;
+        return $owner->photos;
     }
 
     public function canUpload(Model $owner, int $newCount): bool
