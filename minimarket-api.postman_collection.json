@@ -3509,7 +3509,7 @@
     },
     {
       "name": "⚙️ Pengaturan Toko (Admin)",
-      "description": "Pengaturan toko: nama, alamat, logo, mata uang, pajak, dll. **Hanya dapat diakses oleh user dengan role `admin`.**",
+      "description": "Pengaturan toko: nama, alamat, logo, QR code pembayaran, mata uang, pajak, dll. **Hanya dapat diakses oleh user dengan role `admin`.**",
       "item": [
         {
           "name": "Get Pengaturan Toko",
@@ -3546,97 +3546,21 @@
                 "key": "Accept",
                 "value": "application/json",
                 "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
               }
             ],
             "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "store_name",
-                  "value": "Minimarket Sejahtera",
-                  "type": "text",
-                  "description": "Nama toko (wajib)"
-                },
-                {
-                  "key": "store_tagline",
-                  "value": "Belanja Mudah & Hemat",
-                  "type": "text",
-                  "description": "Tagline toko"
-                },
-                {
-                  "key": "store_address",
-                  "value": "Jl. Merdeka No. 1",
-                  "type": "text",
-                  "description": "Alamat lengkap"
-                },
-                {
-                  "key": "store_city",
-                  "value": "Bandung",
-                  "type": "text",
-                  "description": "Kota"
-                },
-                {
-                  "key": "store_province",
-                  "value": "Jawa Barat",
-                  "type": "text",
-                  "description": "Provinsi"
-                },
-                {
-                  "key": "store_postal_code",
-                  "value": "40115",
-                  "type": "text",
-                  "description": "Kode pos"
-                },
-                {
-                  "key": "store_phone",
-                  "value": "022-1234567",
-                  "type": "text",
-                  "description": "Nomor telepon"
-                },
-                {
-                  "key": "store_email",
-                  "value": "toko@example.com",
-                  "type": "text",
-                  "description": "Email toko"
-                },
-                {
-                  "key": "store_logo",
-                  "value": "",
-                  "type": "file",
-                  "description": "Logo toko (gambar, maks 2MB)",
-                  "disabled": true
-                },
-                {
-                  "key": "currency_code",
-                  "value": "IDR",
-                  "type": "text",
-                  "description": "Kode mata uang"
-                },
-                {
-                  "key": "currency_symbol",
-                  "value": "Rp",
-                  "type": "text",
-                  "description": "Simbol mata uang"
-                },
-                {
-                  "key": "tax_enabled",
-                  "value": "false",
-                  "type": "text",
-                  "description": "Aktifkan pajak (true/false)"
-                },
-                {
-                  "key": "tax_rate",
-                  "value": "11",
-                  "type": "text",
-                  "description": "Persentase pajak (0-100)"
-                },
-                {
-                  "key": "receipt_footer",
-                  "value": "Terima kasih telah berbelanja!",
-                  "type": "text",
-                  "description": "Footer nota/struk"
+              "mode": "raw",
+              "raw": "{\n  \"store_name\": \"Minimarket Sejahtera\",\n  \"store_tagline\": \"Belanja Mudah & Hemat\",\n  \"store_address\": \"Jl. Merdeka No. 1\",\n  \"store_city\": \"Bandung\",\n  \"store_province\": \"Jawa Barat\",\n  \"store_postal_code\": \"40115\",\n  \"store_phone\": \"022-1234567\",\n  \"store_email\": \"toko@example.com\",\n  \"currency_code\": \"IDR\",\n  \"currency_symbol\": \"Rp\",\n  \"tax_enabled\": false,\n  \"tax_rate\": 11,\n  \"receipt_footer\": \"Terima kasih telah berbelanja!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
                 }
-              ]
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/store-settings",
@@ -3649,7 +3573,44 @@
                 "store-settings"
               ]
             },
-            "description": "Update pengaturan toko. Gunakan `multipart/form-data` jika ingin upload logo.\n\nJika pengaturan belum pernah dibuat, endpoint ini akan membuatnya secara otomatis.\n\n| Field | Tipe | Keterangan |\n|-------|------|------------|\n| store_name | string | Nama toko |\n| store_tagline | string | Tagline toko |\n| store_address | string | Alamat lengkap |\n| store_city | string | Kota |\n| store_province | string | Provinsi |\n| store_postal_code | string | Kode pos |\n| store_phone | string | Nomor telepon |\n| store_email | email | Email toko |\n| store_logo | file | Logo (image, maks 2MB) |\n| currency_code | string | Kode mata uang (default: IDR) |\n| currency_symbol | string | Simbol mata uang (default: Rp) |\n| tax_enabled | boolean | Aktifkan pajak |\n| tax_rate | numeric | Persentase pajak (0-100) |\n| receipt_footer | string | Footer struk |"
+            "description": "Update pengaturan toko. Jika pengaturan belum pernah dibuat, endpoint ini akan membuatnya secara otomatis.\n\nUntuk upload logo gunakan `POST store-settings/logo`, untuk upload QR code gunakan `POST store-settings/qr-code`.\n\n| Field | Tipe | Keterangan |\n|-------|------|------------|\n| store_name | string | Nama toko |\n| store_tagline | string | Tagline toko |\n| store_address | string | Alamat lengkap |\n| store_city | string | Kota |\n| store_province | string | Provinsi |\n| store_postal_code | string | Kode pos |\n| store_phone | string | Nomor telepon |\n| store_email | email | Email toko |\n| currency_code | string | Kode mata uang (default: IDR) |\n| currency_symbol | string | Simbol mata uang (default: Rp) |\n| tax_enabled | boolean | Aktifkan pajak |\n| tax_rate | numeric | Persentase pajak (0-100) |\n| receipt_footer | string | Footer struk |"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Logo Toko",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "description": "Logo toko (gambar, maks 2MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/store-settings/logo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "store-settings",
+                "logo"
+              ]
+            },
+            "description": "Upload logo toko. Jika sudah ada logo sebelumnya, logo lama akan dihapus otomatis.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| logo | file | ✅ | Gambar logo (maks 2MB) |"
           },
           "response": []
         },
@@ -3679,43 +3640,11 @@
             "description": "Menghapus logo toko dari storage dan mengosongkan field `store_logo`."
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "⚙️ Pengaturan Toko (Admin)",
-      "description": "Pengaturan toko: nama, alamat, logo, mata uang, pajak, dll. **Hanya dapat diakses oleh user dengan role `admin`.**",
-      "item": [
-        {
-          "name": "Get Pengaturan Toko",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/store-settings",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "store-settings"
-              ]
-            },
-            "description": "Mengembalikan pengaturan toko saat ini. Jika belum ada pengaturan, `data` akan bernilai `null`."
-          },
-          "response": []
         },
         {
-          "name": "Update Pengaturan Toko",
+          "name": "Upload QR Code Pembayaran",
           "request": {
-            "method": "PUT",
+            "method": "POST",
             "header": [
               {
                 "key": "Accept",
@@ -3727,109 +3656,30 @@
               "mode": "formdata",
               "formdata": [
                 {
-                  "key": "store_name",
-                  "value": "Minimarket Sejahtera",
-                  "type": "text",
-                  "description": "Nama toko (wajib)"
-                },
-                {
-                  "key": "store_tagline",
-                  "value": "Belanja Mudah & Hemat",
-                  "type": "text",
-                  "description": "Tagline toko"
-                },
-                {
-                  "key": "store_address",
-                  "value": "Jl. Merdeka No. 1",
-                  "type": "text",
-                  "description": "Alamat lengkap"
-                },
-                {
-                  "key": "store_city",
-                  "value": "Bandung",
-                  "type": "text",
-                  "description": "Kota"
-                },
-                {
-                  "key": "store_province",
-                  "value": "Jawa Barat",
-                  "type": "text",
-                  "description": "Provinsi"
-                },
-                {
-                  "key": "store_postal_code",
-                  "value": "40115",
-                  "type": "text",
-                  "description": "Kode pos"
-                },
-                {
-                  "key": "store_phone",
-                  "value": "022-1234567",
-                  "type": "text",
-                  "description": "Nomor telepon"
-                },
-                {
-                  "key": "store_email",
-                  "value": "toko@example.com",
-                  "type": "text",
-                  "description": "Email toko"
-                },
-                {
-                  "key": "store_logo",
-                  "value": "",
+                  "key": "qr_code",
                   "type": "file",
-                  "description": "Logo toko (gambar, maks 2MB)",
-                  "disabled": true
-                },
-                {
-                  "key": "currency_code",
-                  "value": "IDR",
-                  "type": "text",
-                  "description": "Kode mata uang"
-                },
-                {
-                  "key": "currency_symbol",
-                  "value": "Rp",
-                  "type": "text",
-                  "description": "Simbol mata uang"
-                },
-                {
-                  "key": "tax_enabled",
-                  "value": "false",
-                  "type": "text",
-                  "description": "Aktifkan pajak (true/false)"
-                },
-                {
-                  "key": "tax_rate",
-                  "value": "11",
-                  "type": "text",
-                  "description": "Persentase pajak (0-100)"
-                },
-                {
-                  "key": "receipt_footer",
-                  "value": "Terima kasih telah berbelanja!",
-                  "type": "text",
-                  "description": "Footer nota/struk"
+                  "description": "QR code pembayaran (gambar, maks 2MB)"
                 }
               ]
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/store-settings",
+              "raw": "{{base_url}}/api/v1/store-settings/qr-code",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "store-settings"
+                "store-settings",
+                "qr-code"
               ]
             },
-            "description": "Update pengaturan toko. Gunakan `multipart/form-data` jika ingin upload logo.\n\nJika pengaturan belum pernah dibuat, endpoint ini akan membuatnya secara otomatis.\n\n| Field | Tipe | Keterangan |\n|-------|------|------------|\n| store_name | string | Nama toko |\n| store_tagline | string | Tagline toko |\n| store_address | string | Alamat lengkap |\n| store_city | string | Kota |\n| store_province | string | Provinsi |\n| store_postal_code | string | Kode pos |\n| store_phone | string | Nomor telepon |\n| store_email | email | Email toko |\n| store_logo | file | Logo (image, maks 2MB) |\n| currency_code | string | Kode mata uang (default: IDR) |\n| currency_symbol | string | Simbol mata uang (default: Rp) |\n| tax_enabled | boolean | Aktifkan pajak |\n| tax_rate | numeric | Persentase pajak (0-100) |\n| receipt_footer | string | Footer struk |"
+            "description": "Upload QR code pembayaran (contoh: QRIS). Jika sudah ada QR code sebelumnya, file lama akan dihapus otomatis.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| qr_code | file | ✅ | Gambar QR code (maks 2MB) |"
           },
           "response": []
         },
         {
-          "name": "Hapus Logo Toko",
+          "name": "Hapus QR Code Pembayaran",
           "request": {
             "method": "DELETE",
             "header": [
@@ -3840,7 +3690,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/store-settings/logo",
+              "raw": "{{base_url}}/api/v1/store-settings/qr-code",
               "host": [
                 "{{base_url}}"
               ],
@@ -3848,10 +3698,10 @@
                 "api",
                 "v1",
                 "store-settings",
-                "logo"
+                "qr-code"
               ]
             },
-            "description": "Menghapus logo toko dari storage dan mengosongkan field `store_logo`."
+            "description": "Menghapus QR code pembayaran dari storage dan mengosongkan field `payment_qr_code`."
           },
           "response": []
         }

@@ -25,14 +25,6 @@ final class StoreSettingService
      */
     public function update(array $data): StoreSetting
     {
-        if (isset($data['store_logo']) && $data['store_logo'] instanceof UploadedFile) {
-            $data['store_logo'] = $this->uploadLogo($data['store_logo']);
-        }
-
-        if (isset($data['payment_qr_code']) && $data['payment_qr_code'] instanceof UploadedFile) {
-            $data['payment_qr_code'] = $this->uploadQrCode($data['payment_qr_code']);
-        }
-
         $setting = $this->storeSettingRepository->first();
 
         if ($setting === null) {
@@ -40,16 +32,44 @@ final class StoreSettingService
             return $this->storeSettingRepository->create($data);
         }
 
-        if (isset($data['store_logo']) && $setting->store_logo) {
+        /** @var StoreSetting */
+        return $this->storeSettingRepository->update($setting, $data);
+    }
+
+    public function uploadLogo(UploadedFile $file): ?StoreSetting
+    {
+        $setting = $this->storeSettingRepository->first();
+
+        if ($setting === null) {
+            return null;
+        }
+
+        if ($setting->store_logo) {
             Storage::disk('public')->delete($setting->store_logo);
         }
 
-        if (isset($data['payment_qr_code']) && $setting->payment_qr_code) {
+        $path = $file->store('store-logos', 'public');
+
+        /** @var StoreSetting */
+        return $this->storeSettingRepository->update($setting, ['store_logo' => $path]);
+    }
+
+    public function uploadQrCode(UploadedFile $file): ?StoreSetting
+    {
+        $setting = $this->storeSettingRepository->first();
+
+        if ($setting === null) {
+            return null;
+        }
+
+        if ($setting->payment_qr_code) {
             Storage::disk('public')->delete($setting->payment_qr_code);
         }
 
+        $path = $file->store('payment-qrcodes', 'public');
+
         /** @var StoreSetting */
-        return $this->storeSettingRepository->update($setting, $data);
+        return $this->storeSettingRepository->update($setting, ['payment_qr_code' => $path]);
     }
 
     public function deleteLogo(): ?StoreSetting
@@ -84,13 +104,5 @@ final class StoreSettingService
         return $this->storeSettingRepository->update($setting, ['payment_qr_code' => null]);
     }
 
-    private function uploadLogo(UploadedFile $file): string
-    {
-        return $file->store('store-logos', 'public');
-    }
-
-    private function uploadQrCode(UploadedFile $file): string
-    {
-        return $file->store('payment-qrcodes', 'public');
-    }
 }
+

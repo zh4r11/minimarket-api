@@ -157,7 +157,9 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         // Store settings (admin only)
         Route::get('store-settings', [StoreSettingController::class, 'show'])->name('api.v1.store-settings.show');
         Route::put('store-settings', [StoreSettingController::class, 'update'])->name('api.v1.store-settings.update');
+        Route::post('store-settings/logo', [StoreSettingController::class, 'uploadLogo'])->name('api.v1.store-settings.logo.upload');
         Route::delete('store-settings/logo', [StoreSettingController::class, 'deleteLogo'])->name('api.v1.store-settings.logo.destroy');
+        Route::post('store-settings/qr-code', [StoreSettingController::class, 'uploadQrCode'])->name('api.v1.store-settings.qr-code.upload');
         Route::delete('store-settings/qr-code', [StoreSettingController::class, 'deleteQrCode'])->name('api.v1.store-settings.qr-code.destroy');
     });
 
