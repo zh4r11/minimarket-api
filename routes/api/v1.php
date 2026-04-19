@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\StockMovementController;
+use App\Http\Controllers\Api\V1\StoreSettingController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\UnitController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -152,6 +153,11 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         Route::get('roles', [UserController::class, 'roles'])->name('api.v1.roles.index');
         Route::post('users/{user}/roles', [UserController::class, 'assignRole'])->name('api.v1.users.roles.assign');
         Route::delete('users/{user}/roles/{role}', [UserController::class, 'removeRole'])->name('api.v1.users.roles.remove');
+
+        // Store settings (admin only)
+        Route::get('store-settings', [StoreSettingController::class, 'show'])->name('api.v1.store-settings.show');
+        Route::put('store-settings', [StoreSettingController::class, 'update'])->name('api.v1.store-settings.update');
+        Route::delete('store-settings/logo', [StoreSettingController::class, 'deleteLogo'])->name('api.v1.store-settings.logo.destroy');
     });
 
     // Email verification

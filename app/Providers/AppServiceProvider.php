@@ -18,6 +18,7 @@ use App\Repositories\Contracts\SaleRepositoryInterface;
 use App\Repositories\Contracts\StockMovementRepositoryInterface;
 use App\Repositories\Contracts\SupplierRepositoryInterface;
 use App\Repositories\Contracts\UnitRepositoryInterface;
+use App\Repositories\Contracts\StoreSettingRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquent\BrandRepository;
 use App\Repositories\Eloquent\BundleRepository;
@@ -32,6 +33,7 @@ use App\Repositories\Eloquent\PurchaseRepository;
 use App\Repositories\Eloquent\SaleRepository;
 use App\Repositories\Eloquent\StockMovementRepository;
 use App\Repositories\Eloquent\SupplierRepository;
+use App\Repositories\Eloquent\StoreSettingRepository;
 use App\Repositories\Eloquent\UnitRepository;
 use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -60,6 +62,7 @@ final class AppServiceProvider extends ServiceProvider
         SupplierRepositoryInterface::class => SupplierRepository::class,
         UnitRepositoryInterface::class => UnitRepository::class,
         UserRepositoryInterface::class => UserRepository::class,
+        StoreSettingRepositoryInterface::class => StoreSettingRepository::class,
     ];
 
     /**

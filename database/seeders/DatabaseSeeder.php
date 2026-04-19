@@ -31,5 +31,7 @@ final class DatabaseSeeder extends Seeder
             'name' => 'Staff User',
             'email' => 'staff@example.com',
         ])->assignRole('staff');
+
+        $this->call(StoreSettingSeeder::class);
     }
 }

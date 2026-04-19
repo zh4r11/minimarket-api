@@ -42,18 +42,36 @@
             },
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/register",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "register"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "register"
+              ]
             },
             "description": "Mendaftarkan user baru. Email verifikasi akan dikirim setelah registrasi berhasil.\n\n**Rate limit:** 5 request/menit per IP (brute-force protection)\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 255 karakter |\n| email | string | ✅ | Format email, unik |\n| password | string | ✅ | Min 8 karakter |\n| password_confirmation | string | ✅ | Harus sama dengan password |"
           },
@@ -84,18 +102,36 @@
             },
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/login",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "login"
+              ]
             },
             "description": "Login dengan email dan password. Token Sanctum akan otomatis disimpan ke collection variable `token`.\n\n**Rate limit:** 5 request/menit per IP\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| email | string | ✅ | Format email |\n| password | string | ✅ | Password akun |"
           },
@@ -118,12 +154,22 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/logout",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "logout"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "logout"
+              ]
             },
             "description": "Logout dan cabut token Sanctum yang sedang aktif. Token collection variable akan otomatis dihapus."
           },
@@ -134,12 +180,22 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/me",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "me"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me"
+              ]
             },
             "description": "Mengembalikan data profil user yang sedang login beserta roles-nya."
           },
@@ -150,18 +206,37 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"john@example.com\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/email/resend",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "email", "resend"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "email",
+                "resend"
+              ]
             },
             "description": "Kirim ulang email verifikasi ke alamat email yang diberikan.\n\n**Rate limit:** 6 request/menit\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| email | string | ✅ | Harus terdaftar di sistem |"
           },
@@ -172,15 +247,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/email/verify/:id/:hash",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "email", "verify", ":id", ":hash"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "email",
+                "verify",
+                ":id",
+                ":hash"
+              ],
               "variable": [
-                { "key": "id", "value": "1", "description": "ID user dari link verifikasi" },
-                { "key": "hash", "value": "abc123...", "description": "Hash dari link verifikasi email" }
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID user dari link verifikasi"
+                },
+                {
+                  "key": "hash",
+                  "value": "abc123...",
+                  "description": "Hash dari link verifikasi email"
+                }
               ]
             },
             "description": "Verifikasi alamat email menggunakan link bertanda tangan (signed URL) yang dikirim ke email.\n\n**Catatan:** URL ini biasanya diklik langsung dari email dan memerlukan signature yang valid."
@@ -195,18 +291,36 @@
             },
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"john@example.com\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/forgot-password",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "forgot-password"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "forgot-password"
+              ]
             },
             "description": "Mengirim link reset password ke email. Email harus terdaftar di sistem.\n\n**Rate limit:** 6 request/menit\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| email | string | ✅ | Harus terdaftar di sistem |"
           },
@@ -220,18 +334,36 @@
             },
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"token\": \"token-dari-email\",\n  \"email\": \"john@example.com\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/reset-password",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "reset-password"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reset-password"
+              ]
             },
             "description": "Reset password menggunakan token yang diterima via email. Semua token aktif akan dicabut setelah reset berhasil.\n\n**Rate limit:** 6 request/menit\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| token | string | ✅ | Token dari link reset password |\n| email | string | ✅ | Email akun |\n| password | string | ✅ | Password baru |\n| password_confirmation | string | ✅ | Konfirmasi password baru |"
           },
@@ -248,17 +380,47 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/categories",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "categories"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nama", "disabled": true },
-                { "key": "parent_id", "value": "", "description": "Filter berdasarkan parent category ID", "disabled": true },
-                { "key": "per_page", "value": "15", "description": "Jumlah data per halaman (maks: 100)", "disabled": true },
-                { "key": "page", "value": "1", "description": "Nomor halaman", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nama",
+                  "disabled": true
+                },
+                {
+                  "key": "parent_id",
+                  "value": "",
+                  "description": "Filter berdasarkan parent category ID",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Jumlah data per halaman (maks: 100)",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Nomor halaman",
+                  "disabled": true
+                }
               ]
             },
             "description": "Mengembalikan daftar kategori dengan pagination. Mendukung filter berdasarkan kata kunci dan parent category."
@@ -270,18 +432,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Minuman\",\n  \"description\": \"Kategori produk minuman\",\n  \"parent_id\": null,\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/categories",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "categories"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ]
             },
             "description": "Membuat kategori baru. Slug otomatis dibuat dari nama.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 255 karakter, unik |\n| description | string | ❌ | Deskripsi kategori |\n| parent_id | integer | ❌ | ID kategori induk |\n| is_active | boolean | ❌ | Default: true |"
           },
@@ -292,14 +472,29 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/categories/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "categories", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1", "description": "ID kategori" }
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID kategori"
+                }
               ]
             },
             "description": "Mengembalikan detail kategori berdasarkan ID."
@@ -311,20 +506,43 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Minuman Segar\",\n  \"description\": \"Kategori minuman segar dan dingin\",\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/categories/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "categories", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1", "description": "ID kategori" }
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID kategori"
+                }
               ]
             },
             "description": "Update kategori. Slug otomatis diperbarui jika nama berubah. Semua field bersifat opsional.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ❌ | Maks 255 karakter, unik |\n| description | string | ❌ | Deskripsi kategori |\n| parent_id | integer | ❌ | ID kategori induk |\n| is_active | boolean | ❌ | Status aktif |"
@@ -336,14 +554,29 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/categories/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "categories", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1", "description": "ID kategori yang akan dihapus" }
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID kategori yang akan dihapus"
+                }
               ]
             },
             "description": "Hapus permanen kategori berdasarkan ID."
@@ -361,16 +594,39 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/brands",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "brands"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "brands"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nama", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nama",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             },
             "description": "Mengembalikan daftar merek dengan pagination."
@@ -382,18 +638,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Aqua\",\n  \"description\": \"Brand air mineral terkemuka\",\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/brands",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "brands"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "brands"
+              ]
             },
             "description": "Membuat merek baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 255 karakter, unik |\n| description | string | ❌ | Deskripsi merek |\n| is_active | boolean | ❌ | Default: true |"
           },
@@ -404,14 +678,29 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/brands/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "brands", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "brands",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1", "description": "ID merek" }
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID merek"
+                }
               ]
             }
           },
@@ -422,20 +711,43 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Aqua Premium\",\n  \"description\": \"Updated description\",\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/brands/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "brands", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "brands",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1", "description": "ID merek" }
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID merek"
+                }
               ]
             },
             "description": "Update merek. Semua field bersifat opsional."
@@ -447,14 +759,29 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/brands/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "brands", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "brands",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1", "description": "ID merek yang akan dihapus" }
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID merek yang akan dihapus"
+                }
               ]
             }
           },
@@ -471,16 +798,38 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/units",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "units"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "units"
+              ],
               "query": [
-                { "key": "search", "value": "", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -491,18 +840,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Kilogram\",\n  \"symbol\": \"kg\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/units",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "units"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "units"
+              ]
             },
             "description": "Membuat satuan baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 255 karakter, unik |\n| symbol | string | ✅ | Simbol satuan, maks 10 karakter |"
           },
@@ -513,14 +880,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/units/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "units", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "units",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -531,20 +912,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Kilogram\",\n  \"symbol\": \"kg\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/units/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "units", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "units",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -555,14 +958,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/units/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "units", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "units",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -579,16 +996,39 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/suppliers",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "suppliers"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nama atau email", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nama atau email",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -599,18 +1039,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"PT Sumber Makmur\",\n  \"email\": \"supplier@example.com\",\n  \"phone\": \"08112345678\",\n  \"address\": \"Jl. Raya No. 10\",\n  \"city\": \"Jakarta\",\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/suppliers",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "suppliers"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers"
+              ]
             },
             "description": "Membuat supplier baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 255 karakter |\n| email | string | ❌ | Format email, unik |\n| phone | string | ❌ | Maks 30 karakter |\n| address | string | ❌ | Alamat lengkap |\n| city | string | ❌ | Kota, maks 100 karakter |\n| is_active | boolean | ❌ | Default: true |"
           },
@@ -621,14 +1079,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/suppliers/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "suppliers", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -639,20 +1111,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"PT Sumber Makmur Jaya\",\n  \"phone\": \"08198765432\",\n  \"city\": \"Bandung\",\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/suppliers/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "suppliers", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -663,14 +1157,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/suppliers/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "suppliers", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -687,16 +1195,39 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/customers",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "customers"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nama atau email", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nama atau email",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -707,18 +1238,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"email\": \"budi@example.com\",\n  \"phone\": \"081234567890\",\n  \"address\": \"Jl. Merdeka No. 5\",\n  \"city\": \"Surabaya\",\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/customers",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             },
             "description": "Mendaftarkan pelanggan baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 255 karakter |\n| email | string | ❌ | Format email, unik |\n| phone | string | ❌ | Maks 30 karakter |\n| address | string | ❌ | Alamat lengkap |\n| city | string | ❌ | Kota, maks 100 karakter |\n| is_active | boolean | ❌ | Default: true |"
           },
@@ -729,14 +1278,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/customers/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "customers", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -747,20 +1310,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"phone\": \"081999888777\",\n  \"city\": \"Malang\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/customers/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "customers", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -771,14 +1356,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/customers/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "customers", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -795,18 +1394,51 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/products",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "products"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nama atau SKU", "disabled": true },
-                { "key": "category_id", "value": "", "description": "Filter berdasarkan ID kategori", "disabled": true },
-                { "key": "is_active", "value": "1", "description": "Filter status aktif (1/0)", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nama atau SKU",
+                  "disabled": true
+                },
+                {
+                  "key": "category_id",
+                  "value": "",
+                  "description": "Filter berdasarkan ID kategori",
+                  "disabled": true
+                },
+                {
+                  "key": "is_active",
+                  "value": "1",
+                  "description": "Filter status aktif (1/0)",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -817,18 +1449,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"type\": \"single\",\n  \"sku\": \"PRD-001\",\n  \"name\": \"Aqua Botol 600ml\",\n  \"description\": \"Air mineral dalam kemasan botol 600ml\",\n  \"category_id\": 1,\n  \"brand_id\": 1,\n  \"unit_id\": 1,\n  \"buy_price\": 2500,\n  \"sell_price\": 3500,\n  \"stock\": 100,\n  \"min_stock\": 10,\n  \"is_active\": true,\n  \"initial_stock_notes\": \"Stok awal toko\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/products",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "products"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products"
+              ]
             },
             "description": "Membuat produk baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| type | string | ❌ | `single` (default), `parent` |\n| sku | string | ✅ | Kode produk unik, maks 100 karakter |\n| name | string | ✅ | Nama produk, maks 255 karakter |\n| description | string | ❌ | Deskripsi produk |\n| category_id | integer | ❌ | ID kategori |\n| brand_id | integer | ❌ | ID merek |\n| unit_id | integer | ❌ | ID satuan |\n| buy_price | numeric | ✅ | Harga beli (≥ 0) |\n| sell_price | numeric | ✅ | Harga jual (≥ 0) |\n| stock | integer | ❌ | Stok awal (≥ 0, default: 0) |\n| min_stock | integer | ❌ | Minimum stok (≥ 0) |\n| is_active | boolean | ❌ | Default: true |\n| initial_stock_notes | string | ❌ | Catatan untuk stok awal |"
           },
@@ -839,14 +1489,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/products/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "products", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -857,20 +1521,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Aqua Botol 600ml (Baru)\",\n  \"sell_price\": 4000,\n  \"min_stock\": 20,\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/products/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "products", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -881,14 +1567,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/products/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "products", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -899,7 +1599,11 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "formdata",
@@ -914,10 +1618,22 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/products/:product_id/photos",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "products", ":product_id", "photos"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                ":product_id",
+                "photos"
+              ],
               "variable": [
-                { "key": "product_id", "value": "1", "description": "ID produk" }
+                {
+                  "key": "product_id",
+                  "value": "1",
+                  "description": "ID produk"
+                }
               ]
             },
             "description": "Upload foto untuk produk. Gunakan form-data dengan field `photo` berisi file gambar."
@@ -929,15 +1645,37 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/products/:product_id/photos/:photo_id/main",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "products", ":product_id", "photos", ":photo_id", "main"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                ":product_id",
+                "photos",
+                ":photo_id",
+                "main"
+              ],
               "variable": [
-                { "key": "product_id", "value": "1", "description": "ID produk" },
-                { "key": "photo_id", "value": "1", "description": "ID foto yang dijadikan utama" }
+                {
+                  "key": "product_id",
+                  "value": "1",
+                  "description": "ID produk"
+                },
+                {
+                  "key": "photo_id",
+                  "value": "1",
+                  "description": "ID foto yang dijadikan utama"
+                }
               ]
             },
             "description": "Menetapkan foto tertentu sebagai foto utama produk."
@@ -949,15 +1687,36 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/products/:product_id/photos/:photo_id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "products", ":product_id", "photos", ":photo_id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                ":product_id",
+                "photos",
+                ":photo_id"
+              ],
               "variable": [
-                { "key": "product_id", "value": "1", "description": "ID produk" },
-                { "key": "photo_id", "value": "1", "description": "ID foto yang dihapus" }
+                {
+                  "key": "product_id",
+                  "value": "1",
+                  "description": "ID produk"
+                },
+                {
+                  "key": "photo_id",
+                  "value": "1",
+                  "description": "ID foto yang dihapus"
+                }
               ]
             }
           },
@@ -974,16 +1733,38 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attributes",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attributes"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attributes"
+              ],
               "query": [
-                { "key": "search", "value": "", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -994,18 +1775,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Ukuran\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attributes",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attributes"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attributes"
+              ]
             },
             "description": "Membuat atribut varian baru (contoh: Warna, Ukuran, Rasa).\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 100 karakter, unik |"
           },
@@ -1016,14 +1815,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attributes/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attributes", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attributes",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1034,20 +1847,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Ukuran/Size\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attributes/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attributes", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attributes",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1058,14 +1893,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attributes/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attributes", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attributes",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1082,17 +1931,44 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attribute-values",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attribute-values"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attribute-values"
+              ],
               "query": [
-                { "key": "search", "value": "", "disabled": true },
-                { "key": "attribute_id", "value": "", "description": "Filter berdasarkan ID atribut", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "attribute_id",
+                  "value": "",
+                  "description": "Filter berdasarkan ID atribut",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -1103,18 +1979,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"attribute_id\": 1,\n  \"value\": \"500ml\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attribute-values",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attribute-values"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attribute-values"
+              ]
             },
             "description": "Membuat nilai atribut baru untuk suatu atribut varian.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| attribute_id | integer | ✅ | ID atribut varian |\n| value | string | ✅ | Nilai atribut, maks 100 karakter |"
           },
@@ -1125,14 +2019,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attribute-values/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attribute-values", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attribute-values",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1143,20 +2051,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"value\": \"600ml\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attribute-values/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attribute-values", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attribute-values",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1167,14 +2097,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variant-attribute-values/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variant-attribute-values", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variant-attribute-values",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1191,17 +2135,44 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variants",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variants"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variants"
+              ],
               "query": [
-                { "key": "search", "value": "", "disabled": true },
-                { "key": "parent_id", "value": "", "description": "Filter berdasarkan ID produk induk", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "parent_id",
+                  "value": "",
+                  "description": "Filter berdasarkan ID produk induk",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -1212,18 +2183,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"parent_id\": 1,\n  \"sku\": \"PRD-001-500ML\",\n  \"name\": \"Aqua 500ml\",\n  \"buy_price\": 2000,\n  \"sell_price\": 3000,\n  \"stock\": 50,\n  \"min_stock\": 5,\n  \"is_active\": true,\n  \"attribute_value_ids\": [1, 2]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/product-variants",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variants"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variants"
+              ]
             },
             "description": "Membuat varian baru untuk produk bertipe `parent`.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| parent_id | integer | ✅ | ID produk induk (harus bertipe `parent`) |\n| sku | string | ✅ | Kode varian unik, maks 100 karakter |\n| name | string | ❌ | Nama varian |\n| buy_price | numeric | ✅ | Harga beli |\n| sell_price | numeric | ✅ | Harga jual |\n| stock | integer | ❌ | Stok awal (default: 0) |\n| min_stock | integer | ❌ | Minimum stok |\n| is_active | boolean | ❌ | Default: true |\n| attribute_value_ids | array | ❌ | Array ID nilai atribut |"
           },
@@ -1234,14 +2223,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variants/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variants", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variants",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1252,20 +2255,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"sell_price\": 3500,\n  \"min_stock\": 10,\n  \"is_active\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/product-variants/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variants", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variants",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1276,14 +2301,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variants/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variants", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variants",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1294,7 +2333,11 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "formdata",
@@ -1309,10 +2352,22 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/product-variants/:variant_id/photos",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variants", ":variant_id", "photos"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variants",
+                ":variant_id",
+                "photos"
+              ],
               "variable": [
-                { "key": "variant_id", "value": "1", "description": "ID varian produk" }
+                {
+                  "key": "variant_id",
+                  "value": "1",
+                  "description": "ID varian produk"
+                }
               ]
             }
           },
@@ -1323,15 +2378,35 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variants/:variant_id/photos/:photo_id/main",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variants", ":variant_id", "photos", ":photo_id", "main"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variants",
+                ":variant_id",
+                "photos",
+                ":photo_id",
+                "main"
+              ],
               "variable": [
-                { "key": "variant_id", "value": "1" },
-                { "key": "photo_id", "value": "1" }
+                {
+                  "key": "variant_id",
+                  "value": "1"
+                },
+                {
+                  "key": "photo_id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1342,15 +2417,34 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/product-variants/:variant_id/photos/:photo_id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "product-variants", ":variant_id", "photos", ":photo_id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "product-variants",
+                ":variant_id",
+                "photos",
+                ":photo_id"
+              ],
               "variable": [
-                { "key": "variant_id", "value": "1" },
-                { "key": "photo_id", "value": "1" }
+                {
+                  "key": "variant_id",
+                  "value": "1"
+                },
+                {
+                  "key": "photo_id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1367,16 +2461,38 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/bundles",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "bundles"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bundles"
+              ],
               "query": [
-                { "key": "search", "value": "", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -1387,18 +2503,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"sku\": \"BDL-001\",\n  \"name\": \"Paket Sarapan\",\n  \"description\": \"Paket lengkap sarapan pagi\",\n  \"sell_price\": 15000,\n  \"is_active\": true,\n  \"items\": [\n    { \"product_id\": 1, \"quantity\": 2 },\n    { \"product_id\": 2, \"quantity\": 1 }\n  ]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/bundles",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "bundles"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bundles"
+              ]
             },
             "description": "Membuat paket produk baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ✅ | Kode bundle unik, maks 100 karakter |\n| name | string | ✅ | Nama bundle, maks 255 karakter |\n| description | string | ❌ | Deskripsi bundle |\n| sell_price | numeric | ✅ | Harga jual bundle (≥ 0) |\n| is_active | boolean | ❌ | Default: true |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅ | ID produk |\n| items[].quantity | integer | ✅ | Jumlah produk dalam bundle (≥ 1) |"
           },
@@ -1409,14 +2543,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/bundles/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "bundles", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bundles",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1427,20 +2575,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Paket Sarapan Spesial\",\n  \"sell_price\": 18000,\n  \"items\": [\n    { \"product_id\": 1, \"quantity\": 3 },\n    { \"product_id\": 2, \"quantity\": 1 }\n  ]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/bundles/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "bundles", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bundles",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             },
             "description": "Update bundle. Jika `items` dikirim, seluruh item akan diganti.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ❌ | Kode bundle unik |\n| name | string | ❌ | Nama bundle |\n| description | string | ❌ | Deskripsi |\n| sell_price | numeric | ❌ | Harga jual |\n| is_active | boolean | ❌ | Status aktif |\n| items | array | ❌ | Jika dikirim, min 1 item |\n| items[].product_id | integer | ✅ jika items ada | ID produk |\n| items[].quantity | integer | ✅ jika items ada | Jumlah (≥ 1) |"
@@ -1452,14 +2622,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/bundles/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "bundles", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bundles",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1476,18 +2660,51 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/purchases",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "purchases"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "purchases"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nomor invoice", "disabled": true },
-                { "key": "supplier_id", "value": "", "description": "Filter berdasarkan ID supplier", "disabled": true },
-                { "key": "status", "value": "", "description": "Filter status: draft, confirmed, received", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nomor invoice",
+                  "disabled": true
+                },
+                {
+                  "key": "supplier_id",
+                  "value": "",
+                  "description": "Filter berdasarkan ID supplier",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter status: draft, confirmed, received",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -1498,18 +2715,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"supplier_id\": 1,\n  \"purchase_date\": \"2026-04-18\",\n  \"status\": \"draft\",\n  \"notes\": \"Pembelian bulanan\",\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 100,\n      \"buy_price\": 2500\n    },\n    {\n      \"product_id\": 2,\n      \"quantity\": 50,\n      \"buy_price\": 5000\n    }\n  ]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/purchases",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "purchases"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "purchases"
+              ]
             },
             "description": "Membuat purchase order baru. Nomor invoice otomatis dibuat oleh sistem.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| supplier_id | integer | ❌ | ID supplier |\n| purchase_date | date | ✅ | Tanggal pembelian (YYYY-MM-DD) |\n| notes | string | ❌ | Catatan |\n| status | string | ❌ | `draft`, `confirmed`, `received`, `cancelled` |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅ | ID produk |\n| items[].quantity | integer | ✅ | Jumlah (≥ 1) |\n| items[].buy_price | numeric | ✅ | Harga beli (≥ 0) |"
           },
@@ -1520,14 +2755,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/purchases/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "purchases", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "purchases",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1538,20 +2787,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"confirmed\",\n  \"notes\": \"Sudah dikonfirmasi dengan supplier\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/purchases/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "purchases", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "purchases",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             },
             "description": "Update header purchase order. Untuk mengubah status dan informasi umum.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| supplier_id | integer | ❌ | ID supplier |\n| purchase_date | date | ❌ | Tanggal pembelian |\n| notes | string | ❌ | Catatan |\n| status | string | ❌ | `draft`, `confirmed`, `received`, `cancelled` |"
@@ -1563,14 +2834,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/purchases/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "purchases", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "purchases",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1587,18 +2872,51 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/sales",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "sales"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sales"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nomor invoice", "disabled": true },
-                { "key": "status", "value": "", "description": "Filter: draft, completed, cancelled", "disabled": true },
-                { "key": "payment_method", "value": "", "description": "Filter: cash, transfer, qris", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nomor invoice",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter: draft, completed, cancelled",
+                  "disabled": true
+                },
+                {
+                  "key": "payment_method",
+                  "value": "",
+                  "description": "Filter: cash, transfer, qris",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -1609,18 +2927,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"sale_date\": \"2026-04-18\",\n  \"payment_method\": \"cash\",\n  \"status\": \"completed\",\n  \"paid_amount\": 20000,\n  \"discount_amount\": 0,\n  \"tax_amount\": 0,\n  \"notes\": \"Transaksi kasir siang\",\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 3,\n      \"sell_price\": 3500,\n      \"discount\": 0\n    },\n    {\n      \"product_id\": 2,\n      \"quantity\": 1,\n      \"sell_price\": 8000,\n      \"discount\": 500\n    }\n  ]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/sales",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "sales"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sales"
+              ]
             },
             "description": "Membuat transaksi penjualan baru. Nomor invoice, total, dan kembalian dihitung otomatis.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sale_date | date | ✅ | Tanggal penjualan (YYYY-MM-DD) |\n| paid_amount | numeric | ✅ | Jumlah uang yang dibayar (≥ 0) |\n| discount_amount | numeric | ❌ | Total diskon transaksi (≥ 0) |\n| tax_amount | numeric | ❌ | Total pajak (≥ 0) |\n| payment_method | string | ❌ | `cash`, `card`, `transfer` |\n| status | string | ❌ | `draft`, `completed`, `cancelled` |\n| notes | string | ❌ | Catatan |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅ | ID produk |\n| items[].quantity | integer | ✅ | Jumlah (≥ 1) |\n| items[].sell_price | numeric | ✅ | Harga jual (≥ 0) |\n| items[].discount | numeric | ❌ | Diskon per item (≥ 0) |"
           },
@@ -1631,14 +2967,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/sales/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "sales", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sales",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1649,20 +2999,42 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"cancelled\",\n  \"notes\": \"Transaksi dibatalkan oleh kasir\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/sales/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "sales", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sales",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             },
             "description": "Update header transaksi penjualan.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sale_date | date | ❌ | Tanggal penjualan |\n| paid_amount | numeric | ❌ | Jumlah dibayar |\n| discount_amount | numeric | ❌ | Total diskon |\n| tax_amount | numeric | ❌ | Total pajak |\n| payment_method | string | ❌ | `cash`, `card`, `transfer` |\n| status | string | ❌ | `draft`, `completed`, `cancelled` |\n| notes | string | ❌ | Catatan |"
@@ -1674,14 +3046,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/sales/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "sales", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sales",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1698,18 +3084,51 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/stock-movements",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "stock-movements"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stock-movements"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nama produk", "disabled": true },
-                { "key": "product_id", "value": "", "description": "Filter berdasarkan ID produk", "disabled": true },
-                { "key": "type", "value": "", "description": "Filter tipe: in, out, initial, adjustment", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nama produk",
+                  "disabled": true
+                },
+                {
+                  "key": "product_id",
+                  "value": "",
+                  "description": "Filter berdasarkan ID produk",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "description": "Filter tipe: in, out, initial, adjustment",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -1720,18 +3139,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"product_id\": 1,\n  \"type\": \"in\",\n  \"quantity\": 50,\n  \"notes\": \"Stok masuk dari supplier\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/stock-movements",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "stock-movements"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stock-movements"
+              ]
             },
             "description": "Mencatat pergerakan stok produk (stok masuk atau keluar).\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| product_id | integer | ✅ | ID produk |\n| type | string | ✅ | `in`, `out`, `adjustment`, `initial` |\n| quantity | integer | ✅ | Jumlah (≥ 1) |\n| notes | string | ❌ | Catatan pergerakan |"
           },
@@ -1742,14 +3179,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/stock-movements/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "stock-movements", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stock-movements",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1760,18 +3211,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"product_id\": 1,\n  \"actual_stock\": 48,\n  \"notes\": \"Stock opname April 2026\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/stock-adjustments",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "stock-adjustments"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stock-adjustments"
+              ]
             },
             "description": "Menyesuaikan stok ke nilai aktual setelah penghitungan fisik (stock opname). Selisih stok otomatis dicatat sebagai `adjustment`.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| product_id | integer | ✅ | ID produk |\n| actual_stock | integer | ✅ | Jumlah stok aktual hasil penghitungan fisik (≥ 0) |\n| notes | string | ❌ | Alasan penyesuaian |"
           },
@@ -1788,18 +3257,52 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/reports/stock",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "reports", "stock"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "stock"
+              ],
               "query": [
-                { "key": "search", "value": "", "description": "Cari berdasarkan nama/SKU produk", "disabled": true },
-                { "key": "category_id", "value": "", "description": "Filter berdasarkan ID kategori", "disabled": true },
-                { "key": "status", "value": "", "description": "Filter status stok: `low` (di bawah minimum), `empty` (habis)", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Cari berdasarkan nama/SKU produk",
+                  "disabled": true
+                },
+                {
+                  "key": "category_id",
+                  "value": "",
+                  "description": "Filter berdasarkan ID kategori",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter status stok: `low` (di bawah minimum), `empty` (habis)",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             },
             "description": "Mengembalikan laporan stok semua produk dengan informasi total stok masuk, stok keluar, stok saat ini, dan status stok.\n\n| Query Param | Tipe | Keterangan |\n|-------------|------|------------|\n| search | string | Cari nama/SKU produk |\n| category_id | integer | Filter berdasarkan kategori |\n| status | string | `low` = stok di bawah minimum, `empty` = stok habis |"
@@ -1817,16 +3320,38 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/users",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "users"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ],
               "query": [
-                { "key": "search", "value": "", "disabled": true },
-                { "key": "per_page", "value": "15", "disabled": true },
-                { "key": "page", "value": "1", "disabled": true }
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -1837,14 +3362,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/users/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "users", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "1" }
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1855,12 +3394,22 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/roles",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "roles"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "roles"
+              ]
             },
             "description": "Mengembalikan semua role yang tersedia di sistem."
           },
@@ -1871,20 +3420,44 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" },
-              { "key": "Content-Type", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"admin\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/users/:user_id/roles",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "users", ":user_id", "roles"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":user_id",
+                "roles"
+              ],
               "variable": [
-                { "key": "user_id", "value": "2", "description": "ID user yang akan diberi role" }
+                {
+                  "key": "user_id",
+                  "value": "2",
+                  "description": "ID user yang akan diberi role"
+                }
               ]
             },
             "description": "Memberikan role kepada user.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| role | string | ✅ | Nama role yang valid (harus ada di database) |"
@@ -1896,18 +3469,389 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json", "type": "text" }
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/api/v1/users/:user_id/roles/:role",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "users", ":user_id", "roles", ":role"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":user_id",
+                "roles",
+                ":role"
+              ],
               "variable": [
-                { "key": "user_id", "value": "2", "description": "ID user" },
-                { "key": "role", "value": "admin", "description": "Nama role yang akan dicabut" }
+                {
+                  "key": "user_id",
+                  "value": "2",
+                  "description": "ID user"
+                },
+                {
+                  "key": "role",
+                  "value": "admin",
+                  "description": "Nama role yang akan dicabut"
+                }
               ]
             },
             "description": "Mencabut/menghapus role dari user."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Pengaturan Toko (Admin)",
+      "description": "Pengaturan toko: nama, alamat, logo, mata uang, pajak, dll. **Hanya dapat diakses oleh user dengan role `admin`.**",
+      "item": [
+        {
+          "name": "Get Pengaturan Toko",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/store-settings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "store-settings"
+              ]
+            },
+            "description": "Mengembalikan pengaturan toko saat ini. Jika belum ada pengaturan, `data` akan bernilai `null`."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Pengaturan Toko",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "store_name",
+                  "value": "Minimarket Sejahtera",
+                  "type": "text",
+                  "description": "Nama toko (wajib)"
+                },
+                {
+                  "key": "store_tagline",
+                  "value": "Belanja Mudah & Hemat",
+                  "type": "text",
+                  "description": "Tagline toko"
+                },
+                {
+                  "key": "store_address",
+                  "value": "Jl. Merdeka No. 1",
+                  "type": "text",
+                  "description": "Alamat lengkap"
+                },
+                {
+                  "key": "store_city",
+                  "value": "Bandung",
+                  "type": "text",
+                  "description": "Kota"
+                },
+                {
+                  "key": "store_province",
+                  "value": "Jawa Barat",
+                  "type": "text",
+                  "description": "Provinsi"
+                },
+                {
+                  "key": "store_postal_code",
+                  "value": "40115",
+                  "type": "text",
+                  "description": "Kode pos"
+                },
+                {
+                  "key": "store_phone",
+                  "value": "022-1234567",
+                  "type": "text",
+                  "description": "Nomor telepon"
+                },
+                {
+                  "key": "store_email",
+                  "value": "toko@example.com",
+                  "type": "text",
+                  "description": "Email toko"
+                },
+                {
+                  "key": "store_logo",
+                  "value": "",
+                  "type": "file",
+                  "description": "Logo toko (gambar, maks 2MB)",
+                  "disabled": true
+                },
+                {
+                  "key": "currency_code",
+                  "value": "IDR",
+                  "type": "text",
+                  "description": "Kode mata uang"
+                },
+                {
+                  "key": "currency_symbol",
+                  "value": "Rp",
+                  "type": "text",
+                  "description": "Simbol mata uang"
+                },
+                {
+                  "key": "tax_enabled",
+                  "value": "false",
+                  "type": "text",
+                  "description": "Aktifkan pajak (true/false)"
+                },
+                {
+                  "key": "tax_rate",
+                  "value": "11",
+                  "type": "text",
+                  "description": "Persentase pajak (0-100)"
+                },
+                {
+                  "key": "receipt_footer",
+                  "value": "Terima kasih telah berbelanja!",
+                  "type": "text",
+                  "description": "Footer nota/struk"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/store-settings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "store-settings"
+              ]
+            },
+            "description": "Update pengaturan toko. Gunakan `multipart/form-data` jika ingin upload logo.\n\nJika pengaturan belum pernah dibuat, endpoint ini akan membuatnya secara otomatis.\n\n| Field | Tipe | Keterangan |\n|-------|------|------------|\n| store_name | string | Nama toko |\n| store_tagline | string | Tagline toko |\n| store_address | string | Alamat lengkap |\n| store_city | string | Kota |\n| store_province | string | Provinsi |\n| store_postal_code | string | Kode pos |\n| store_phone | string | Nomor telepon |\n| store_email | email | Email toko |\n| store_logo | file | Logo (image, maks 2MB) |\n| currency_code | string | Kode mata uang (default: IDR) |\n| currency_symbol | string | Simbol mata uang (default: Rp) |\n| tax_enabled | boolean | Aktifkan pajak |\n| tax_rate | numeric | Persentase pajak (0-100) |\n| receipt_footer | string | Footer struk |"
+          },
+          "response": []
+        },
+        {
+          "name": "Hapus Logo Toko",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/store-settings/logo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "store-settings",
+                "logo"
+              ]
+            },
+            "description": "Menghapus logo toko dari storage dan mengosongkan field `store_logo`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Pengaturan Toko (Admin)",
+      "description": "Pengaturan toko: nama, alamat, logo, mata uang, pajak, dll. **Hanya dapat diakses oleh user dengan role `admin`.**",
+      "item": [
+        {
+          "name": "Get Pengaturan Toko",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/store-settings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "store-settings"
+              ]
+            },
+            "description": "Mengembalikan pengaturan toko saat ini. Jika belum ada pengaturan, `data` akan bernilai `null`."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Pengaturan Toko",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "store_name",
+                  "value": "Minimarket Sejahtera",
+                  "type": "text",
+                  "description": "Nama toko (wajib)"
+                },
+                {
+                  "key": "store_tagline",
+                  "value": "Belanja Mudah & Hemat",
+                  "type": "text",
+                  "description": "Tagline toko"
+                },
+                {
+                  "key": "store_address",
+                  "value": "Jl. Merdeka No. 1",
+                  "type": "text",
+                  "description": "Alamat lengkap"
+                },
+                {
+                  "key": "store_city",
+                  "value": "Bandung",
+                  "type": "text",
+                  "description": "Kota"
+                },
+                {
+                  "key": "store_province",
+                  "value": "Jawa Barat",
+                  "type": "text",
+                  "description": "Provinsi"
+                },
+                {
+                  "key": "store_postal_code",
+                  "value": "40115",
+                  "type": "text",
+                  "description": "Kode pos"
+                },
+                {
+                  "key": "store_phone",
+                  "value": "022-1234567",
+                  "type": "text",
+                  "description": "Nomor telepon"
+                },
+                {
+                  "key": "store_email",
+                  "value": "toko@example.com",
+                  "type": "text",
+                  "description": "Email toko"
+                },
+                {
+                  "key": "store_logo",
+                  "value": "",
+                  "type": "file",
+                  "description": "Logo toko (gambar, maks 2MB)",
+                  "disabled": true
+                },
+                {
+                  "key": "currency_code",
+                  "value": "IDR",
+                  "type": "text",
+                  "description": "Kode mata uang"
+                },
+                {
+                  "key": "currency_symbol",
+                  "value": "Rp",
+                  "type": "text",
+                  "description": "Simbol mata uang"
+                },
+                {
+                  "key": "tax_enabled",
+                  "value": "false",
+                  "type": "text",
+                  "description": "Aktifkan pajak (true/false)"
+                },
+                {
+                  "key": "tax_rate",
+                  "value": "11",
+                  "type": "text",
+                  "description": "Persentase pajak (0-100)"
+                },
+                {
+                  "key": "receipt_footer",
+                  "value": "Terima kasih telah berbelanja!",
+                  "type": "text",
+                  "description": "Footer nota/struk"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/store-settings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "store-settings"
+              ]
+            },
+            "description": "Update pengaturan toko. Gunakan `multipart/form-data` jika ingin upload logo.\n\nJika pengaturan belum pernah dibuat, endpoint ini akan membuatnya secara otomatis.\n\n| Field | Tipe | Keterangan |\n|-------|------|------------|\n| store_name | string | Nama toko |\n| store_tagline | string | Tagline toko |\n| store_address | string | Alamat lengkap |\n| store_city | string | Kota |\n| store_province | string | Provinsi |\n| store_postal_code | string | Kode pos |\n| store_phone | string | Nomor telepon |\n| store_email | email | Email toko |\n| store_logo | file | Logo (image, maks 2MB) |\n| currency_code | string | Kode mata uang (default: IDR) |\n| currency_symbol | string | Simbol mata uang (default: Rp) |\n| tax_enabled | boolean | Aktifkan pajak |\n| tax_rate | numeric | Persentase pajak (0-100) |\n| receipt_footer | string | Footer struk |"
+          },
+          "response": []
+        },
+        {
+          "name": "Hapus Logo Toko",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/store-settings/logo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "store-settings",
+                "logo"
+              ]
+            },
+            "description": "Menghapus logo toko dari storage dan mengosongkan field `store_logo`."
           },
           "response": []
         }
