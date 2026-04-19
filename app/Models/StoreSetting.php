@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $store_phone
  * @property string|null $store_email
  * @property string|null $store_logo
+ * @property string|null $payment_qr_code
  * @property string $currency_code
  * @property string $currency_symbol
  * @property bool $tax_enabled
@@ -39,6 +40,7 @@ final class StoreSetting extends Model
         'store_phone',
         'store_email',
         'store_logo',
+        'payment_qr_code',
         'currency_code',
         'currency_symbol',
         'tax_enabled',

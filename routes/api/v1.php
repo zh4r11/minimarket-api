@@ -158,6 +158,7 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         Route::get('store-settings', [StoreSettingController::class, 'show'])->name('api.v1.store-settings.show');
         Route::put('store-settings', [StoreSettingController::class, 'update'])->name('api.v1.store-settings.update');
         Route::delete('store-settings/logo', [StoreSettingController::class, 'deleteLogo'])->name('api.v1.store-settings.logo.destroy');
+        Route::delete('store-settings/qr-code', [StoreSettingController::class, 'deleteQrCode'])->name('api.v1.store-settings.qr-code.destroy');
     });
 
     // Email verification

@@ -32,6 +32,9 @@ final class StoreSettingResource extends JsonResource
             'store_logo'       => $this->store_logo
                 ? Storage::disk('public')->url($this->store_logo)
                 : null,
+            'payment_qr_code'  => $this->payment_qr_code
+                ? Storage::disk('public')->url($this->payment_qr_code)
+                : null,
             'currency_code'    => $this->currency_code,
             'currency_symbol'  => $this->currency_symbol,
             'tax_enabled'      => $this->tax_enabled,

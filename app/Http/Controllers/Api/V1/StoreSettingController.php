@@ -60,4 +60,20 @@ final class StoreSettingController extends ApiController
 
         return $this->success(new StoreSettingResource($setting));
     }
+
+    /**
+     * Delete payment QR code.
+     *
+     * Removes the payment QR code from storage and clears the field.
+     */
+    public function deleteQrCode(): JsonResponse
+    {
+        $setting = $this->storeSettingService->deleteQrCode();
+
+        if ($setting === null) {
+            return $this->notFound('Pengaturan toko belum dikonfigurasi.');
+        }
+
+        return $this->success(new StoreSettingResource($setting));
+    }
 }

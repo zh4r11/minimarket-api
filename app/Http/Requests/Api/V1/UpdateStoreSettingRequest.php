@@ -29,6 +29,7 @@ final class UpdateStoreSettingRequest extends FormRequest
             'store_phone'       => ['nullable', 'string', 'max:30'],
             'store_email'       => ['nullable', 'email', 'max:255'],
             'store_logo'        => ['nullable', 'image', 'max:2048'],
+            'payment_qr_code'   => ['nullable', 'image', 'max:2048'],
             'currency_code'     => ['nullable', 'string', 'max:10'],
             'currency_symbol'   => ['nullable', 'string', 'max:10'],
             'tax_enabled'       => ['nullable', 'boolean'],
