@@ -2516,7 +2516,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"sku\": \"BDL-001\",\n  \"name\": \"Paket Sarapan\",\n  \"description\": \"Paket lengkap sarapan pagi\",\n  \"sell_price\": 15000,\n  \"is_active\": true,\n  \"items\": [\n    { \"product_id\": 1, \"quantity\": 2 },\n    { \"product_id\": 2, \"quantity\": 1 }\n  ]\n}",
+              "raw": "{\n  \"sku\": \"BDL-001\",\n  \"name\": \"Paket Sarapan\",\n  \"description\": \"Paket lengkap sarapan pagi\",\n  \"sell_price\": 15000,\n  \"is_active\": true,\n  \"items\": [\n    { \"product_id\": 1, \"variant_id\": 11, \"quantity\": 2 },\n    { \"product_id\": 2, \"quantity\": 1 }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2534,7 +2534,7 @@
                 "bundles"
               ]
             },
-            "description": "Membuat paket produk baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ✅ | Kode bundle unik, maks 100 karakter |\n| name | string | ✅ | Nama bundle, maks 255 karakter |\n| description | string | ❌ | Deskripsi bundle |\n| sell_price | numeric | ✅ | Harga jual bundle (≥ 0) |\n| is_active | boolean | ❌ | Default: true |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅ | ID produk |\n| items[].quantity | integer | ✅ | Jumlah produk dalam bundle (≥ 1) |"
+            "description": "Membuat paket produk baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ✅ | Kode bundle unik, maks 100 karakter |\n| name | string | ✅ | Nama bundle, maks 255 karakter |\n| description | string | ❌ | Deskripsi bundle |\n| sell_price | numeric | ✅ | Harga jual bundle (≥ 0) |\n| is_active | boolean | ❌ | Default: true |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅ | ID produk parent/produk single |\n| items[].variant_id | integer | ❌ | ID varian; jika diisi maka stok varian yang dipakai |\n| items[].quantity | integer | ✅ | Jumlah produk dalam bundle (≥ 1) |"
           },
           "response": []
         },
@@ -2588,7 +2588,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Paket Sarapan Spesial\",\n  \"sell_price\": 18000,\n  \"items\": [\n    { \"product_id\": 1, \"quantity\": 3 },\n    { \"product_id\": 2, \"quantity\": 1 }\n  ]\n}",
+              "raw": "{\n  \"name\": \"Paket Sarapan Spesial\",\n  \"sell_price\": 18000,\n  \"items\": [\n    { \"product_id\": 1, \"variant_id\": 11, \"quantity\": 3 },\n    { \"product_id\": 2, \"quantity\": 1 }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2613,7 +2613,7 @@
                 }
               ]
             },
-            "description": "Update bundle. Jika `items` dikirim, seluruh item akan diganti.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ❌ | Kode bundle unik |\n| name | string | ❌ | Nama bundle |\n| description | string | ❌ | Deskripsi |\n| sell_price | numeric | ❌ | Harga jual |\n| is_active | boolean | ❌ | Status aktif |\n| items | array | ❌ | Jika dikirim, min 1 item |\n| items[].product_id | integer | ✅ jika items ada | ID produk |\n| items[].quantity | integer | ✅ jika items ada | Jumlah (≥ 1) |"
+            "description": "Update bundle. Jika `items` dikirim, seluruh item akan diganti.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ❌ | Kode bundle unik |\n| name | string | ❌ | Nama bundle |\n| description | string | ❌ | Deskripsi |\n| sell_price | numeric | ❌ | Harga jual |\n| is_active | boolean | ❌ | Status aktif |\n| items | array | ❌ | Jika dikirim, min 1 item |\n| items[].product_id | integer | ✅ jika items ada | ID produk parent/produk single |\n| items[].variant_id | integer | ❌ | ID varian; jika diisi maka stok varian yang dipakai |\n| items[].quantity | integer | ✅ jika items ada | Jumlah (≥ 1) |"
           },
           "response": []
         },
@@ -2646,6 +2646,135 @@
                 }
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Foto Bundle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photos[]",
+                  "type": "file",
+                  "src": "",
+                  "description": "File foto bundle (dapat ditambahkan lebih dari 1 key photos[])"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bundles/:bundle_id/photos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bundles",
+                ":bundle_id",
+                "photos"
+              ],
+              "variable": [
+                {
+                  "key": "bundle_id",
+                  "value": "1",
+                  "description": "ID bundle"
+                }
+              ]
+            },
+            "description": "Upload foto untuk bundle. Maksimal total 5 foto per bundle."
+          },
+          "response": []
+        },
+        {
+          "name": "Set Foto Utama Bundle",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/bundles/:bundle_id/photos/:photo_id/main",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bundles",
+                ":bundle_id",
+                "photos",
+                ":photo_id",
+                "main"
+              ],
+              "variable": [
+                {
+                  "key": "bundle_id",
+                  "value": "1",
+                  "description": "ID bundle"
+                },
+                {
+                  "key": "photo_id",
+                  "value": "1",
+                  "description": "ID foto bundle"
+                }
+              ]
+            },
+            "description": "Menetapkan foto tertentu sebagai foto utama bundle."
+          },
+          "response": []
+        },
+        {
+          "name": "Hapus Foto Bundle",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/bundles/:bundle_id/photos/:photo_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bundles",
+                ":bundle_id",
+                "photos",
+                ":photo_id"
+              ],
+              "variable": [
+                {
+                  "key": "bundle_id",
+                  "value": "1",
+                  "description": "ID bundle"
+                },
+                {
+                  "key": "photo_id",
+                  "value": "1",
+                  "description": "ID foto bundle"
+                }
+              ]
+            },
+            "description": "Menghapus foto bundle berdasarkan ID foto."
           },
           "response": []
         }

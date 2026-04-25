@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\BundleController;
+use App\Http\Controllers\Api\V1\BundlePhotoController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ProductPhotoController;
@@ -145,6 +146,9 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         'update' => 'api.v1.bundles.update',
         'destroy' => 'api.v1.bundles.destroy',
     ]);
+    Route::post('bundles/{bundle}/photos', [BundlePhotoController::class, 'store'])->name('api.v1.bundles.photos.store');
+    Route::delete('bundles/{bundle}/photos/{photo}', [BundlePhotoController::class, 'destroy'])->name('api.v1.bundles.photos.destroy');
+    Route::patch('bundles/{bundle}/photos/{photo}/main', [BundlePhotoController::class, 'setMain'])->name('api.v1.bundles.photos.set-main');
 
     // User & role management (admin only)
     Route::middleware('role:admin')->group(function (): void {

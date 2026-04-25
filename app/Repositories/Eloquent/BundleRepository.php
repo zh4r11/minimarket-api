@@ -21,7 +21,7 @@ final class BundleRepository extends BaseRepository implements BundleRepositoryI
     public function paginate(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         return $this->query()
-            ->with(['items.product'])
+            ->with(['items.product', 'photos'])
             ->when($filters['search'] ?? null, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
                 ->orWhere('sku', 'like', "%{$s}%"))
             ->when(array_key_exists('is_active', $filters), fn ($q) => $q->where('is_active', $filters['is_active']))

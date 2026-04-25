@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Models\Bundle;
 use App\Models\Product;
+use App\Models\ProductPhoto;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -129,5 +133,43 @@ describe('Bundles', function (): void {
 
         expect($bundleFromIndex)->not->toBeNull();
         expect($bundleFromIndex['stock'])->toBe(4);
+    });
+
+    it('uploads bundle photos and returns them in bundle detail', function (): void {
+        Storage::fake('public');
+
+        $user = User::factory()->create();
+        $bundle = Bundle::query()->create([
+            'sku' => 'BDL-PHOTO-001',
+            'name' => 'Paket Foto',
+            'sell_price' => 30000,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($user)->post(
+            "/api/v1/bundles/{$bundle->id}/photos",
+            [
+                'photos' => [UploadedFile::fake()->image('bundle-photo.jpg')],
+            ],
+            [
+                'Accept' => 'application/json',
+            ]
+        )->assertStatus(200)
+            ->assertJsonCount(1, 'data');
+
+        $photo = ProductPhoto::query()
+            ->where('photoable_type', Bundle::class)
+            ->where('photoable_id', $bundle->id)
+            ->first();
+
+        expect($photo)->not->toBeNull();
+
+        Storage::disk('public')->assertExists($photo->path);
+
+        $this->actingAs($user)
+            ->getJson("/api/v1/bundles/{$bundle->id}")
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data.photos')
+            ->assertJsonPath('data.photos.0.id', $photo->id);
     });
 });

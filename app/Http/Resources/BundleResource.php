@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
-use App\Models\Product;
+use App\Models\Bundle;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin Product
+ * @mixin Bundle
  */
 final class BundleResource extends JsonResource
 {
@@ -26,6 +26,7 @@ final class BundleResource extends JsonResource
             'sell_price' => $this->sell_price,
             'stock' => (int) $this->stock,
             'is_active' => $this->is_active,
+            'photos' => $this->whenLoaded('photos', fn () => ProductPhotoResource::collection($this->photos)),
             'items' => $this->whenLoaded('items', fn () => BundleItemResource::collection($this->items)),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

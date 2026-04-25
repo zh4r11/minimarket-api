@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Bundle;
+use App\Models\Product;
 use App\Models\ProductPhoto;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -40,7 +42,7 @@ final class ProductPhotoService
 
     public function canUpload(Model $owner, int $newCount): bool
     {
-        $maxPhotos = $owner instanceof Product ? self::MAX_PHOTOS : 2;
+        $maxPhotos = $this->resolveMaxPhotos($owner);
 
         return $owner->photos()->count() + $newCount <= $maxPhotos;
     }
@@ -52,7 +54,7 @@ final class ProductPhotoService
 
     public function getMaxPhotos(Model $owner): int
     {
-        return $owner instanceof Product ? self::MAX_PHOTOS : 2;
+        return $this->resolveMaxPhotos($owner);
     }
 
     public function destroyPhoto(ProductPhoto $photo): bool
@@ -78,5 +80,10 @@ final class ProductPhotoService
     public function promoteNextMain(Model $owner): void
     {
         $owner->photos()->orderBy('sort_order')->first()?->update(['is_main' => true]);
+    }
+
+    private function resolveMaxPhotos(Model $owner): int
+    {
+        return $owner instanceof Product || $owner instanceof Bundle ? self::MAX_PHOTOS : 2;
     }
 }

@@ -34,7 +34,7 @@ final class BundleService
 
     public function show(Bundle $bundle): Bundle
     {
-        $bundle->load(['items.product']);
+        $bundle->load(['items.product', 'photos']);
         $this->bundleStockService->recalculateForBundle($bundle);
 
         return $bundle;
@@ -52,7 +52,7 @@ final class BundleService
             /** @var Bundle $bundle */
             $bundle = $this->bundleRepository->create($data);
             $bundle->items()->createMany($items);
-            $bundle->load(['items.product']);
+            $bundle->load(['items.product', 'photos']);
             $this->bundleStockService->recalculateForBundle($bundle);
 
             return $bundle;
@@ -77,7 +77,7 @@ final class BundleService
                 $bundle->items()->createMany($items);
             }
 
-            $bundle->load(['items.product']);
+            $bundle->load(['items.product', 'photos']);
             $this->bundleStockService->recalculateForBundle($bundle);
 
             return $bundle;

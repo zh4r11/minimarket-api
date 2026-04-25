@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -59,5 +60,11 @@ final class Bundle extends Model
     public function items(): HasMany
     {
         return $this->hasMany(BundleItem::class, 'bundle_id');
+    }
+
+    /** @return MorphMany<ProductPhoto, $this> */
+    public function photos(): MorphMany
+    {
+        return $this->morphMany(ProductPhoto::class, 'photoable')->orderBy('sort_order');
     }
 }
