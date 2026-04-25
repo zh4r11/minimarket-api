@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table): void {
             $table->unsignedBigInteger('parent_id')->nullable()->after('id');
-            $table->enum('type', ['single', 'parent', 'variant'])->default('single')->after('parent_id');
+            $table->enum('type', ['single', 'parent', 'variant', 'bundle'])->default('single')->after('parent_id');
 
             $table->foreign('parent_id')->references('id')->on('products')->cascadeOnDelete();
             $table->index('parent_id');

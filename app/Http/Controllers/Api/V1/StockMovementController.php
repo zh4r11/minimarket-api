@@ -29,7 +29,7 @@ final class StockMovementController extends ApiController
         $filters = $request->validate([
             'search'     => 'nullable|string',
             'product_id' => 'nullable|integer|exists:products,id',
-            'type'       => 'nullable|string|in:in,out,initial,adjustment',
+            'type'       => 'nullable|string|in:in,out,initial,adjustment,sale,purchase',
             'per_page'   => 'nullable|integer|min:1|max:100',
             'page'       => 'nullable|integer|min:1',
         ]);

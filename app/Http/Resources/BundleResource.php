@@ -24,6 +24,7 @@ final class BundleResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'sell_price' => $this->sell_price,
+            'stock' => (int) $this->stock,
             'is_active' => $this->is_active,
             'items' => $this->whenLoaded('items', fn () => BundleItemResource::collection($this->items)),
             'created_at' => $this->created_at?->toIso8601String(),

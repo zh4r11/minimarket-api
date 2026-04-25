@@ -47,6 +47,45 @@ describe('Stock Movements', function (): void {
             ->assertJsonPath('data.id', $movement->id);
     });
 
+    it('recalculates bundle stock and reflects it in products endpoint after stock movement', function (): void {
+        $user = User::factory()->create();
+        $component = Product::factory()->create(['stock' => 10]);
+
+        $bundleResponse = $this->actingAs($user)->postJson('/api/v1/bundles', [
+            'sku' => 'BDL-MOVE-001',
+            'name' => 'Paket Mutasi',
+            'sell_price' => 18000,
+            'items' => [
+                ['product_id' => $component->id, 'quantity' => 2],
+            ],
+        ])->assertStatus(201)
+            ->assertJsonPath('data.stock', 5);
+
+        $bundleId = (int) $bundleResponse->json('data.id');
+
+        $this->actingAs($user)->postJson('/api/v1/stock-movements', [
+            'product_id' => $component->id,
+            'type' => 'out',
+            'quantity' => 4,
+            'notes' => 'Transfer keluar',
+        ])->assertStatus(201)
+            ->assertJsonPath('data.type', 'out')
+            ->assertJsonPath('data.quantity', 4);
+
+        $this->assertDatabaseHas('products', ['id' => $component->id, 'stock' => 6]);
+        $this->assertDatabaseHas('products', ['id' => $bundleId, 'stock' => 3]);
+
+        $productsResponse = $this->actingAs($user)
+            ->getJson('/api/v1/products')
+            ->assertStatus(200);
+
+        $bundleProduct = collect($productsResponse->json('data.data'))
+            ->firstWhere('id', $bundleId);
+
+        expect($bundleProduct)->not->toBeNull();
+        expect($bundleProduct['stock'])->toBe(3);
+    });
+
     it('validates required fields on store', function (): void {
         $user = User::factory()->create();
         $this->actingAs($user)->postJson('/api/v1/stock-movements', [])

@@ -13,6 +13,7 @@ final class BundleService
 {
     public function __construct(
         private readonly BundleRepositoryInterface $bundleRepository,
+        private readonly BundleStockService $bundleStockService,
     ) {}
 
     /**
@@ -22,7 +23,21 @@ final class BundleService
     {
         $perPage = min((int) ($filters['per_page'] ?? 15), 100);
 
-        return $this->bundleRepository->paginate($filters, $perPage);
+        $bundles = $this->bundleRepository->paginate($filters, $perPage);
+
+        $bundles->getCollection()->each(
+            fn (Bundle $bundle): int => $this->bundleStockService->recalculateForBundle($bundle)
+        );
+
+        return $bundles;
+    }
+
+    public function show(Bundle $bundle): Bundle
+    {
+        $bundle->load(['items.product']);
+        $this->bundleStockService->recalculateForBundle($bundle);
+
+        return $bundle;
     }
 
     /**
@@ -30,20 +45,18 @@ final class BundleService
      */
     public function create(array $data): Bundle
     {
-        $items = $data['items'];
+        $items = $this->normalizeItems($data['items']);
         unset($data['items']);
 
-        $bundle = DB::transaction(function () use ($data, $items): Bundle {
+        return DB::transaction(function () use ($data, $items): Bundle {
             /** @var Bundle $bundle */
             $bundle = $this->bundleRepository->create($data);
             $bundle->items()->createMany($items);
+            $bundle->load(['items.product']);
+            $this->bundleStockService->recalculateForBundle($bundle);
 
             return $bundle;
         });
-
-        $bundle->load(['items.product']);
-
-        return $bundle;
     }
 
     /**
@@ -51,23 +64,45 @@ final class BundleService
      */
     public function update(Bundle $bundle, array $data): Bundle
     {
-        $items = $data['items'] ?? null;
+        $items = array_key_exists('items', $data)
+            ? $this->normalizeItems($data['items'])
+            : null;
         unset($data['items']);
 
-        $this->bundleRepository->update($bundle, $data);
+        return DB::transaction(function () use ($bundle, $data, $items): Bundle {
+            $this->bundleRepository->update($bundle, $data);
 
-        if ($items !== null) {
-            $bundle->items()->delete();
-            $bundle->items()->createMany($items);
-        }
+            if ($items !== null) {
+                $bundle->items()->delete();
+                $bundle->items()->createMany($items);
+            }
 
-        $bundle->load(['items.product']);
+            $bundle->load(['items.product']);
+            $this->bundleStockService->recalculateForBundle($bundle);
 
-        return $bundle;
+            return $bundle;
+        });
     }
 
     public function delete(Bundle $bundle): void
     {
         $this->bundleRepository->delete($bundle);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $items
+     * @return array<int, array{product_id: int, quantity: int}>
+     */
+    private function normalizeItems(array $items): array
+    {
+        return array_map(
+            static fn (array $item): array => [
+                'product_id' => isset($item['variant_id']) && $item['variant_id'] !== null
+                    ? (int) $item['variant_id']
+                    : (int) $item['product_id'],
+                'quantity' => (int) $item['quantity'],
+            ],
+            $items
+        );
     }
 }

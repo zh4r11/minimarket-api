@@ -14,6 +14,7 @@ final class StockMovementService
 {
     public function __construct(
         private readonly StockMovementRepositoryInterface $stockMovementRepository,
+        private readonly BundleStockService $bundleStockService,
     ) {}
 
     /**
@@ -52,6 +53,7 @@ final class StockMovementService
             ]);
 
             $product->update(['stock' => $afterStock]);
+            $this->bundleStockService->recalculateAffectedBundlesByComponentIds([$product->id]);
             $movement->load('product');
 
             return $movement;
@@ -88,6 +90,7 @@ final class StockMovementService
             ]);
 
             $product->update(['stock' => $actualStock]);
+            $this->bundleStockService->recalculateAffectedBundlesByComponentIds([$product->id]);
             $movement->load('product');
 
             return $movement;

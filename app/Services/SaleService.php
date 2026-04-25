@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\BundleItem;
 use App\Models\Product;
 use App\Models\Sale;
-use App\Models\StockMovement;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\SaleRepositoryInterface;
 use App\Repositories\Contracts\StockMovementRepositoryInterface;
@@ -21,6 +20,7 @@ final class SaleService
         private readonly ProductRepositoryInterface $productRepository,
         private readonly StockMovementRepositoryInterface $stockMovementRepository,
         private readonly InvoiceNumberService $invoiceNumberService,
+        private readonly BundleStockService $bundleStockService,
     ) {}
 
     /**
@@ -55,6 +55,7 @@ final class SaleService
             ]);
 
             $totalAmount = 0;
+            $affectedComponentProductIds = [];
 
             foreach ($data['items'] as $item) {
                 $product = Product::query()->withoutGlobalScopes()->findOrFail($item['product_id']);
@@ -70,8 +71,10 @@ final class SaleService
                     'subtotal' => $subtotal,
                 ]);
 
-                $this->deductStock($product, $item, $sale);
+                $this->deductStock($product, $item, $sale, $affectedComponentProductIds);
             }
+
+            $this->bundleStockService->recalculateAffectedBundlesByComponentIds($affectedComponentProductIds);
 
             $discountAmount = $data['discount_amount'] ?? 0;
             $taxAmount = $data['tax_amount'] ?? 0;
@@ -112,20 +115,22 @@ final class SaleService
 
     /**
      * @param  array<string, mixed>  $item
+     * @param  array<int, int>  $affectedComponentProductIds
      */
-    private function deductStock(Product $product, array $item, Sale $sale): void
+    private function deductStock(Product $product, array $item, Sale $sale, array &$affectedComponentProductIds): void
     {
         if ($product->type === 'bundle') {
-            $this->deductBundleStock($product, $item, $sale);
+            $this->deductBundleStock($product, $item, $sale, $affectedComponentProductIds);
         } else {
-            $this->deductProductStock($product, $item, $sale);
+            $this->deductProductStock($product, $item, $sale, $affectedComponentProductIds);
         }
     }
 
     /**
      * @param  array<string, mixed>  $item
+     * @param  array<int, int>  $affectedComponentProductIds
      */
-    private function deductBundleStock(Product $product, array $item, Sale $sale): void
+    private function deductBundleStock(Product $product, array $item, Sale $sale, array &$affectedComponentProductIds): void
     {
         $bundleItems = BundleItem::query()
             ->with('product')
@@ -140,9 +145,10 @@ final class SaleService
             $component = $bundleItem->product;
             $deductQty = $item['quantity'] * $bundleItem->quantity;
             $beforeStock = $component->stock;
-            $afterStock = max(0, $beforeStock - $deductQty);
+            $afterStock = $beforeStock - $deductQty;
 
             $component->decrement('stock', $deductQty);
+            $affectedComponentProductIds[] = $component->id;
 
             $this->stockMovementRepository->create([
                 'product_id' => $component->id,
@@ -160,13 +166,15 @@ final class SaleService
 
     /**
      * @param  array<string, mixed>  $item
+     * @param  array<int, int>  $affectedComponentProductIds
      */
-    private function deductProductStock(Product $product, array $item, Sale $sale): void
+    private function deductProductStock(Product $product, array $item, Sale $sale, array &$affectedComponentProductIds): void
     {
         $beforeStock = $product->stock;
-        $afterStock = max(0, $beforeStock - $item['quantity']);
+        $afterStock = $beforeStock - $item['quantity'];
 
         $product->decrement('stock', $item['quantity']);
+        $affectedComponentProductIds[] = $product->id;
 
         $this->stockMovementRepository->create([
             'product_id' => $product->id,

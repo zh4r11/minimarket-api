@@ -57,7 +57,7 @@ final class BundleController extends ApiController
      */
     public function show(Bundle $bundle): JsonResponse
     {
-        $bundle->load(['items.product']);
+        $bundle = $this->bundleService->show($bundle);
 
         return $this->success(new BundleResource($bundle));
     }

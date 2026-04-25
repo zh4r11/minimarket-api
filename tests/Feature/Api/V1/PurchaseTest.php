@@ -63,6 +63,43 @@ describe('Purchases', function (): void {
         $this->assertDatabaseMissing('purchases', ['id' => $purchase->id]);
     });
 
+    it('increases component stock and recalculates dependent bundle stock on purchase', function (): void {
+        $user = User::factory()->create();
+        $component = Product::factory()->create(['stock' => 5]);
+
+        $bundleResponse = $this->actingAs($user)->postJson('/api/v1/bundles', [
+            'sku' => 'BDL-PURCHASE-001',
+            'name' => 'Paket Restock',
+            'sell_price' => 20000,
+            'items' => [
+                ['product_id' => $component->id, 'quantity' => 2],
+            ],
+        ])->assertStatus(201)
+            ->assertJsonPath('data.stock', 2);
+
+        $bundleId = (int) $bundleResponse->json('data.id');
+
+        $this->actingAs($user)->postJson('/api/v1/purchases', [
+            'purchase_date' => '2025-01-01',
+            'items' => [
+                [
+                    'product_id' => $component->id,
+                    'quantity' => 5,
+                    'buy_price' => 10000,
+                ],
+            ],
+        ])->assertStatus(201)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('products', ['id' => $component->id, 'stock' => 10]);
+        $this->assertDatabaseHas('products', ['id' => $bundleId, 'stock' => 5]);
+        $this->assertDatabaseHas('stock_movements', [
+            'product_id' => $component->id,
+            'type' => 'purchase',
+            'quantity' => 5,
+        ]);
+    });
+
     it('validates required fields on store', function (): void {
         $user = User::factory()->create();
         $this->actingAs($user)->postJson('/api/v1/purchases', [])

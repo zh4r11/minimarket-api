@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Product;
 use App\Models\Purchase;
+use App\Repositories\Contracts\StockMovementRepositoryInterface;
 use App\Repositories\Contracts\PurchaseRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,9 @@ final class PurchaseService
 {
     public function __construct(
         private readonly PurchaseRepositoryInterface $purchaseRepository,
+        private readonly StockMovementRepositoryInterface $stockMovementRepository,
         private readonly InvoiceNumberService $invoiceNumberService,
+        private readonly BundleStockService $bundleStockService,
     ) {}
 
     /**
@@ -43,6 +47,7 @@ final class PurchaseService
             ]);
 
             $totalAmount = 0;
+            $affectedComponentProductIds = [];
 
             foreach ($data['items'] as $item) {
                 $subtotal = $item['quantity'] * $item['buy_price'];
@@ -54,7 +59,28 @@ final class PurchaseService
                     'buy_price' => $item['buy_price'],
                     'subtotal' => $subtotal,
                 ]);
+
+                $product = Product::query()->lockForUpdate()->findOrFail($item['product_id']);
+                $beforeStock = $product->stock;
+                $afterStock = $beforeStock + $item['quantity'];
+
+                $product->update(['stock' => $afterStock]);
+                $affectedComponentProductIds[] = $product->id;
+
+                $this->stockMovementRepository->create([
+                    'product_id' => $product->id,
+                    'type' => 'purchase',
+                    'reference_type' => Purchase::class,
+                    'reference_id' => $purchase->id,
+                    'quantity' => $item['quantity'],
+                    'before_stock' => $beforeStock,
+                    'after_stock' => $afterStock,
+                    'notes' => $data['notes'] ?? null,
+                    'created_by' => auth()->id(),
+                ]);
             }
+
+            $this->bundleStockService->recalculateAffectedBundlesByComponentIds($affectedComponentProductIds);
 
             $this->purchaseRepository->update($purchase, ['total_amount' => $totalAmount]);
             $purchase->load(['supplier', 'items.product']);

@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('stock_movements', function (Blueprint $table): void {
-            $table->enum('type', ['in', 'out', 'adjustment', 'initial'])->change();
+            $table->enum('type', ['in', 'out', 'adjustment', 'initial', 'sale', 'purchase'])->change();
         });
     }
 
