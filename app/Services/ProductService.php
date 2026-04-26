@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Bundle;
 use App\Models\Product;
+use App\Models\ProductPhoto;
 use App\Models\StockMovement;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\StockMovementRepositoryInterface;
@@ -73,6 +75,15 @@ final class ProductService
     {
         $this->productRepository->update($product, $data);
         $product->load(['category', 'brand', 'unit', 'photos']);
+
+        if ($product->type === 'bundle') {
+            $photos = ProductPhoto::query()
+                ->where('photoable_type', Bundle::class)
+                ->where('photoable_id', $product->id)
+                ->orderBy('sort_order')
+                ->get();
+            $product->setRelation('photos', $photos);
+        }
 
         return $product;
     }
