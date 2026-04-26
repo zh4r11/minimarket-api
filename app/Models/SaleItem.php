@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $sale_id
  * @property int $product_id
+ * @property int|null $variant_id
  * @property int $quantity
  * @property string $sell_price
  * @property string $discount
@@ -27,7 +28,7 @@ final class SaleItem extends Model
     use HasFactory;
 
     /** @var list<string> */
-    protected $fillable = ['sale_id', 'product_id', 'quantity', 'sell_price', 'discount', 'subtotal'];
+    protected $fillable = ['sale_id', 'product_id', 'variant_id', 'quantity', 'sell_price', 'discount', 'subtotal'];
 
     protected function casts(): array
     {
@@ -49,5 +50,11 @@ final class SaleItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /** @return BelongsTo<Product, $this> */
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'variant_id');
     }
 }

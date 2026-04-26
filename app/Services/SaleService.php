@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\BundleItem;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Sale;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\SaleRepositoryInterface;
@@ -58,6 +59,11 @@ final class SaleService
             $affectedComponentProductIds = [];
 
             foreach ($data['items'] as $item) {
+                // Support bundle_id as an alias for product_id
+                if (isset($item['bundle_id']) && ! isset($item['product_id'])) {
+                    $item['product_id'] = $item['bundle_id'];
+                }
+
                 $product = Product::query()->withoutGlobalScopes()->findOrFail($item['product_id']);
                 $itemDiscount = $item['discount'] ?? 0;
                 $subtotal = ($item['quantity'] * $item['sell_price']) - $itemDiscount;
@@ -65,6 +71,7 @@ final class SaleService
 
                 $this->saleRepository->createItem($sale->id, [
                     'product_id' => $item['product_id'],
+                    'variant_id' => $item['variant_id'] ?? null,
                     'quantity' => $item['quantity'],
                     'sell_price' => $item['sell_price'],
                     'discount' => $itemDiscount,
@@ -170,6 +177,30 @@ final class SaleService
      */
     private function deductProductStock(Product $product, array $item, Sale $sale, array &$affectedComponentProductIds): void
     {
+        if (isset($item['variant_id'])) {
+            /** @var ProductVariant $variant */
+            $variant = ProductVariant::query()->findOrFail($item['variant_id']);
+            $beforeStock = $variant->stock;
+            $afterStock = $beforeStock - $item['quantity'];
+
+            $variant->decrement('stock', $item['quantity']);
+            $affectedComponentProductIds[] = $variant->id;
+
+            $this->stockMovementRepository->create([
+                'product_id' => $variant->id,
+                'type' => 'sale',
+                'reference_type' => Sale::class,
+                'reference_id' => $sale->id,
+                'quantity' => -$item['quantity'],
+                'before_stock' => $beforeStock,
+                'after_stock' => $afterStock,
+                'notes' => null,
+                'created_by' => auth()->id(),
+            ]);
+
+            return;
+        }
+
         $beforeStock = $product->stock;
         $afterStock = $beforeStock - $item['quantity'];
 
