@@ -34,7 +34,7 @@ final class BundleService
 
     public function show(Bundle $bundle): Bundle
     {
-        $bundle->load(['items.product', 'photos']);
+        $bundle->load(['items.product', 'items.variant', 'photos']);
         $this->bundleStockService->recalculateForBundle($bundle);
 
         return $bundle;
@@ -52,7 +52,7 @@ final class BundleService
             /** @var Bundle $bundle */
             $bundle = $this->bundleRepository->create($data);
             $bundle->items()->createMany($items);
-            $bundle->load(['items.product', 'photos']);
+            $bundle->load(['items.product', 'items.variant', 'photos']);
             $this->bundleStockService->recalculateForBundle($bundle);
 
             return $bundle;
@@ -77,7 +77,7 @@ final class BundleService
                 $bundle->items()->createMany($items);
             }
 
-            $bundle->load(['items.product', 'photos']);
+            $bundle->load(['items.product', 'items.variant', 'photos']);
             $this->bundleStockService->recalculateForBundle($bundle);
 
             return $bundle;
@@ -91,15 +91,16 @@ final class BundleService
 
     /**
      * @param  array<int, array<string, mixed>>  $items
-     * @return array<int, array{product_id: int, quantity: int}>
+     * @return array<int, array{product_id: int, variant_id: int|null, quantity: int}>
      */
     private function normalizeItems(array $items): array
     {
         return array_map(
             static fn (array $item): array => [
-                'product_id' => isset($item['variant_id']) && $item['variant_id'] !== null
+                'product_id' => (int) $item['product_id'],
+                'variant_id' => isset($item['variant_id']) && $item['variant_id'] !== null
                     ? (int) $item['variant_id']
-                    : (int) $item['product_id'],
+                    : null,
                 'quantity' => (int) $item['quantity'],
             ],
             $items

@@ -145,6 +145,55 @@ describe('Sales', function (): void {
         $this->assertDatabaseHas('products', ['id' => $bundleId, 'stock' => 3]);
     });
 
+    it('deducts variant stock when selling bundle that contains variant components', function (): void {
+        $user = User::factory()->create();
+
+        // Create a parent product with a variant
+        $parent = Product::factory()->create(['type' => 'parent', 'stock' => 0]);
+        $variantResponse = $this->actingAs($user)->postJson('/api/v1/product-variants', [
+            'parent_id' => $parent->id,
+            'sku' => 'VAR-BUNDLE-001',
+            'name' => $parent->name . ' - Merah',
+            'buy_price' => 5000,
+            'sell_price' => 7000,
+            'stock' => 20,
+            'min_stock' => 2,
+        ])->assertStatus(201);
+
+        $variantId = (int) $variantResponse->json('data.id');
+
+        // Create a bundle whose component is the variant
+        $bundleResponse = $this->actingAs($user)->postJson('/api/v1/bundles', [
+            'sku' => 'BDL-VAR-001',
+            'name' => 'Paket Varian',
+            'sell_price' => 15000,
+            'items' => [
+                ['product_id' => $parent->id, 'variant_id' => $variantId, 'quantity' => 2],
+            ],
+        ])->assertStatus(201)
+            ->assertJsonPath('data.stock', 10);
+
+        $bundleId = (int) $bundleResponse->json('data.id');
+
+        // Sell 1 bundle (should deduct 2 from variant stock)
+        $this->actingAs($user)->postJson('/api/v1/sales', [
+            'sale_date' => now()->toDateString(),
+            'paid_amount' => 15000,
+            'items' => [
+                [
+                    'product_id' => $bundleId,
+                    'quantity' => 1,
+                    'sell_price' => 15000,
+                ],
+            ],
+        ])->assertStatus(201);
+
+        // Variant stock should drop from 20 to 18
+        $this->assertDatabaseHas('products', ['id' => $variantId, 'stock' => 18]);
+        // Bundle stock should recalculate to 9
+        $this->assertDatabaseHas('products', ['id' => $bundleId, 'stock' => 9]);
+    });
+
     it('validates required fields on store', function (): void {
         $user = User::factory()->create();
         $this->actingAs($user)->postJson('/api/v1/sales', [])

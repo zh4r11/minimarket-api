@@ -80,7 +80,8 @@ describe('Bundles', function (): void {
 
         $this->assertDatabaseHas('bundle_items', [
             'bundle_id' => $bundleId,
-            'product_id' => $variantProduct->id,
+            'product_id' => $parentProduct->id,
+            'variant_id' => $variantProduct->id,
             'quantity' => 2,
         ]);
 

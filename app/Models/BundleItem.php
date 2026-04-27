@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $bundle_id
  * @property int|null $product_id
+ * @property int|null $variant_id
  * @property int $quantity
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -22,6 +23,7 @@ final class BundleItem extends Model
     protected $fillable = [
         'bundle_id',
         'product_id',
+        'variant_id',
         'quantity',
     ];
 
@@ -42,5 +44,11 @@ final class BundleItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /** @return BelongsTo<Product, $this> */
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'variant_id');
     }
 }

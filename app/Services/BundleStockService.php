@@ -15,7 +15,8 @@ final class BundleStockService
     public function calculateFromItems(iterable $items): int
     {
         $itemStocks = collect($items)->map(function (BundleItem $item): int {
-            $componentStock = max(0, (int) ($item->product?->stock ?? 0));
+            // Use variant stock when a specific variant is set; otherwise fall back to product stock
+            $componentStock = max(0, (int) ($item->variant?->stock ?? $item->product?->stock ?? 0));
             $componentQty = max(1, (int) $item->quantity);
 
             return intdiv($componentStock, $componentQty);
@@ -30,7 +31,7 @@ final class BundleStockService
 
     public function recalculateForBundle(Bundle $bundle): int
     {
-        $bundle->loadMissing(['items.product']);
+        $bundle->loadMissing(['items.product', 'items.variant']);
 
         $calculatedStock = $this->calculateFromItems($bundle->items);
 
@@ -59,7 +60,10 @@ final class BundleStockService
         }
 
         $bundleIds = BundleItem::query()
-            ->whereIn('product_id', $componentIds)
+            ->where(function ($q) use ($componentIds): void {
+                $q->whereIn('product_id', $componentIds->all())
+                    ->orWhereIn('variant_id', $componentIds->all());
+            })
             ->distinct()
             ->pluck('bundle_id');
 

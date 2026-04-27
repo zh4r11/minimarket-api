@@ -140,16 +140,18 @@ final class SaleService
     private function deductBundleStock(Product $product, array $item, Sale $sale, array &$affectedComponentProductIds): void
     {
         $bundleItems = BundleItem::query()
-            ->with('product')
+            ->with(['product', 'variant'])
             ->where('bundle_id', $product->id)
             ->get();
 
         foreach ($bundleItems as $bundleItem) {
-            if ($bundleItem->product === null) {
+            // Prefer explicit variant; fall back to product (which may itself be a variant row)
+            $component = $bundleItem->variant ?? $bundleItem->product;
+
+            if ($component === null) {
                 continue;
             }
 
-            $component = $bundleItem->product;
             $deductQty = $item['quantity'] * $bundleItem->quantity;
             $beforeStock = $component->stock;
             $afterStock = $beforeStock - $deductQty;
