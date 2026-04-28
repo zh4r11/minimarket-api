@@ -60,7 +60,10 @@ final class PurchaseService
                     'subtotal' => $subtotal,
                 ]);
 
-                $product = Product::query()->withoutGlobalScopes()->lockForUpdate()->findOrFail($item['product_id']);
+                // Use variant_id if provided, otherwise use product_id
+                $targetProductId = $item['variant_id'] ?? $item['product_id'];
+
+                $product = Product::query()->withoutGlobalScopes()->lockForUpdate()->findOrFail($targetProductId);
                 $beforeStock = $product->stock;
                 $afterStock = $beforeStock + $item['quantity'];
 
