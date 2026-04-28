@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Models\Purchase;
 use App\Repositories\Contracts\StockMovementRepositoryInterface;
 use App\Repositories\Contracts\PurchaseRepositoryInterface;
@@ -56,59 +55,31 @@ final class PurchaseService
 
                 $this->purchaseRepository->createItem($purchase->id, [
                     'product_id' => $item['product_id'],
-                    'variant_id' => $item['variant_id'] ?? null,
                     'quantity' => $item['quantity'],
                     'buy_price' => $item['buy_price'],
                     'subtotal' => $subtotal,
                 ]);
 
-                $product = Product::query()->withoutGlobalScopes()->findOrFail($item['product_id']);
+                $product = Product::query()->withoutGlobalScopes()->lockForUpdate()->findOrFail($item['product_id']);
+                $beforeStock = $product->stock;
+                $afterStock = $beforeStock + $item['quantity'];
 
-                if (isset($item['variant_id'])) {
-                    /** @var ProductVariant $variant */
-                    $variant = ProductVariant::query()->lockForUpdate()->findOrFail($item['variant_id']);
-                    $beforeStock = $variant->stock;
-                    $afterStock = $beforeStock + $item['quantity'];
+                $product->update(['stock' => $afterStock]);
 
-                    $variant->update(['stock' => $afterStock]);
+                $this->stockMovementRepository->create([
+                    'product_id' => $product->id,
+                    'type' => 'in',
+                    'reference_type' => Purchase::class,
+                    'reference_id' => $purchase->id,
+                    'quantity' => $item['quantity'],
+                    'before_stock' => $beforeStock,
+                    'after_stock' => $afterStock,
+                    'notes' => $data['notes'] ?? null,
+                    'created_by' => auth()->id(),
+                ]);
 
-                    $this->stockMovementRepository->create([
-                        'product_id' => $item['product_id'],
-                        'variant_id' => $variant->id,
-                        'type' => 'in',
-                        'reference_type' => Purchase::class,
-                        'reference_id' => $purchase->id,
-                        'quantity' => $item['quantity'],
-                        'before_stock' => $beforeStock,
-                        'after_stock' => $afterStock,
-                        'notes' => $data['notes'] ?? null,
-                        'created_by' => auth()->id(),
-                    ]);
-
-                    if ($variant->type !== 'bundle') {
-                        $affectedComponentProductIds[] = $variant->id;
-                    }
-                } else {
-                    $beforeStock = $product->stock;
-                    $afterStock = $beforeStock + $item['quantity'];
-
-                    $product->update(['stock' => $afterStock]);
-
-                    $this->stockMovementRepository->create([
-                        'product_id' => $product->id,
-                        'type' => 'in',
-                        'reference_type' => Purchase::class,
-                        'reference_id' => $purchase->id,
-                        'quantity' => $item['quantity'],
-                        'before_stock' => $beforeStock,
-                        'after_stock' => $afterStock,
-                        'notes' => $data['notes'] ?? null,
-                        'created_by' => auth()->id(),
-                    ]);
-
-                    if ($product->type !== 'bundle') {
-                        $affectedComponentProductIds[] = $product->id;
-                    }
+                if ($product->type !== 'bundle') {
+                    $affectedComponentProductIds[] = $product->id;
                 }
             }
 

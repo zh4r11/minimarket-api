@@ -38,11 +38,7 @@ final class PurchaseRepository extends BaseRepository implements PurchaseReposit
         /** @var PurchaseItem */
         return PurchaseItem::query()->create([
             'purchase_id' => $purchaseId,
-            'product_id' => $item['product_id'],
-            'variant_id' => $item['variant_id'] ?? null,
-            'quantity' => $item['quantity'],
-            'buy_price' => $item['buy_price'],
-            'subtotal' => $item['subtotal'],
+            ...$item,
         ]);
     }
 }
