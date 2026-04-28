@@ -157,7 +157,10 @@ final class SaleService
             $afterStock = $beforeStock - $deductQty;
 
             $component->decrement('stock', $deductQty);
-            $affectedComponentProductIds[] = $component->id;
+
+            if ($component->type !== 'bundle') {
+                $affectedComponentProductIds[] = $component->id;
+            }
 
             $this->stockMovementRepository->create([
                 'product_id' => $component->id,
@@ -186,7 +189,10 @@ final class SaleService
             $afterStock = $beforeStock - $item['quantity'];
 
             $variant->decrement('stock', $item['quantity']);
-            $affectedComponentProductIds[] = $variant->id;
+
+            if ($variant->type !== 'bundle') {
+                $affectedComponentProductIds[] = $variant->id;
+            }
 
             $this->stockMovementRepository->create([
                 'product_id' => $variant->id,
@@ -207,7 +213,10 @@ final class SaleService
         $afterStock = $beforeStock - $item['quantity'];
 
         $product->decrement('stock', $item['quantity']);
-        $affectedComponentProductIds[] = $product->id;
+
+        if ($product->type !== 'bundle') {
+            $affectedComponentProductIds[] = $product->id;
+        }
 
         $this->stockMovementRepository->create([
             'product_id' => $product->id,

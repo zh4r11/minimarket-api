@@ -65,7 +65,6 @@ final class PurchaseService
                 $afterStock = $beforeStock + $item['quantity'];
 
                 $product->update(['stock' => $afterStock]);
-                $affectedComponentProductIds[] = $product->id;
 
                 $this->stockMovementRepository->create([
                     'product_id' => $product->id,
@@ -78,6 +77,10 @@ final class PurchaseService
                     'notes' => $data['notes'] ?? null,
                     'created_by' => auth()->id(),
                 ]);
+
+                if ($product->type !== 'bundle') {
+                    $affectedComponentProductIds[] = $product->id;
+                }
             }
 
             $this->bundleStockService->recalculateAffectedBundlesByComponentIds($affectedComponentProductIds);
