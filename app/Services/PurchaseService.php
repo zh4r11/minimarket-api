@@ -69,7 +69,7 @@ final class PurchaseService
 
                 $this->stockMovementRepository->create([
                     'product_id' => $product->id,
-                    'type' => 'purchase',
+                    'type' => 'in',
                     'reference_type' => Purchase::class,
                     'reference_id' => $purchase->id,
                     'quantity' => $item['quantity'],

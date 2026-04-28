@@ -6,9 +6,15 @@ namespace App\Services;
 
 use App\Models\Bundle;
 use App\Models\BundleItem;
+use App\Repositories\Contracts\StockMovementRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 
 final class BundleStockService
 {
+    public function __construct(
+        private readonly StockMovementRepositoryInterface $stockMovementRepository,
+    ) {}
+
     /**
      * @param  iterable<BundleItem>  $items
      */
@@ -36,7 +42,22 @@ final class BundleStockService
         $calculatedStock = $this->calculateFromItems($bundle->items);
 
         if ((int) $bundle->stock !== $calculatedStock) {
+            $beforeStock = (int) $bundle->stock;
+            $stockDiff = $calculatedStock - $beforeStock;
             $bundle->forceFill(['stock' => $calculatedStock])->save();
+
+            // Create stock movement for bundle stock change
+            $this->stockMovementRepository->create([
+                'product_id' => $bundle->id,
+                'type' => $stockDiff >= 0 ? 'in' : 'out',
+                'reference_type' => Bundle::class,
+                'reference_id' => $bundle->id,
+                'quantity' => abs($stockDiff),
+                'before_stock' => $beforeStock,
+                'after_stock' => $calculatedStock,
+                'notes' => 'Bundle stock recalculation due to component stock change',
+                'created_by' => Auth::id(),
+            ]);
         }
 
         $bundle->setAttribute('stock', $calculatedStock);

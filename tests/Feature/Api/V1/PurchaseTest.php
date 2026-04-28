@@ -95,7 +95,7 @@ describe('Purchases', function (): void {
         $this->assertDatabaseHas('products', ['id' => $bundleId, 'stock' => 5]);
         $this->assertDatabaseHas('stock_movements', [
             'product_id' => $component->id,
-            'type' => 'purchase',
+            'type' => 'in',
             'quantity' => 5,
         ]);
     });

@@ -101,14 +101,14 @@ describe('Sales', function (): void {
 
         $this->assertDatabaseHas('stock_movements', [
             'product_id' => $componentA->id,
-            'type' => 'sale',
-            'quantity' => -4,
+            'type' => 'out',
+            'quantity' => 4,
         ]);
 
         $this->assertDatabaseHas('stock_movements', [
             'product_id' => $componentB->id,
-            'type' => 'sale',
-            'quantity' => -6,
+            'type' => 'out',
+            'quantity' => 6,
         ]);
     });
 

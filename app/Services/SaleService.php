@@ -161,10 +161,10 @@ final class SaleService
 
             $this->stockMovementRepository->create([
                 'product_id' => $component->id,
-                'type' => 'sale',
+                'type' => 'out',
                 'reference_type' => Sale::class,
                 'reference_id' => $sale->id,
-                'quantity' => -$deductQty,
+                'quantity' => $deductQty,
                 'before_stock' => $beforeStock,
                 'after_stock' => $afterStock,
                 'notes' => "Bundle: {$product->name}",
@@ -190,10 +190,10 @@ final class SaleService
 
             $this->stockMovementRepository->create([
                 'product_id' => $variant->id,
-                'type' => 'sale',
+                'type' => 'out',
                 'reference_type' => Sale::class,
                 'reference_id' => $sale->id,
-                'quantity' => -$item['quantity'],
+                'quantity' => $item['quantity'],
                 'before_stock' => $beforeStock,
                 'after_stock' => $afterStock,
                 'notes' => null,
@@ -211,10 +211,10 @@ final class SaleService
 
         $this->stockMovementRepository->create([
             'product_id' => $product->id,
-            'type' => 'sale',
+            'type' => 'out',
             'reference_type' => Sale::class,
             'reference_id' => $sale->id,
-            'quantity' => -$item['quantity'],
+            'quantity' => $item['quantity'],
             'before_stock' => $beforeStock,
             'after_stock' => $afterStock,
             'notes' => null,
