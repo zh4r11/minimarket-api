@@ -32,6 +32,7 @@ final class StockReportResource extends JsonResource
             'id' => $this->id,
             'sku' => $this->sku,
             'name' => $this->name,
+            'type' => $this->type,
             'category' => $this->whenLoaded('category', fn () => $this->category?->name),
             'unit' => $this->whenLoaded('unit', fn () => $this->unit?->name),
             'stock_in' => (int) $this->stock_in,

@@ -2164,6 +2164,12 @@
                   "disabled": true
                 },
                 {
+                  "key": "is_active",
+                  "value": "1",
+                  "description": "Filter status aktif (1/0)",
+                  "disabled": true
+                },
+                {
                   "key": "per_page",
                   "value": "15",
                   "disabled": true
@@ -2534,7 +2540,7 @@
                 "bundles"
               ]
             },
-            "description": "Membuat paket produk baru.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ✅ | Kode bundle unik, maks 100 karakter |\n| name | string | ✅ | Nama bundle, maks 255 karakter |\n| description | string | ❌ | Deskripsi bundle |\n| sell_price | numeric | ✅ | Harga jual bundle (≥ 0) |\n| is_active | boolean | ❌ | Default: true |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅ | ID produk parent/produk single |\n| items[].variant_id | integer | ❌ | ID varian; jika diisi maka stok varian yang dipakai |\n| items[].quantity | integer | ✅ | Jumlah produk dalam bundle (≥ 1) |"
+            "description": "Membuat paket produk baru.\n\n**Catatan stok bundle:** Stok bundle dihitung otomatis dari stok komponen. Jika komponen adalah varian, wajib isi `variant_id`.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ✅ | Kode bundle unik, maks 100 karakter |\n| name | string | ✅ | Nama bundle, maks 255 karakter |\n| description | string | ❌ | Deskripsi bundle |\n| sell_price | numeric | ✅ | Harga jual bundle (≥ 0) |\n| is_active | boolean | ❌ | Default: true |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅ | ID produk parent atau produk single |\n| items[].variant_id | integer | ✅* | ID varian; **wajib** jika `product_id` bertipe `parent`; stok varian yang dipakai |\n| items[].quantity | integer | ✅ | Jumlah produk dalam bundle (≥ 1) |"
           },
           "response": []
         },
@@ -2613,7 +2619,7 @@
                 }
               ]
             },
-            "description": "Update bundle. Jika `items` dikirim, seluruh item akan diganti.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ❌ | Kode bundle unik |\n| name | string | ❌ | Nama bundle |\n| description | string | ❌ | Deskripsi |\n| sell_price | numeric | ❌ | Harga jual |\n| is_active | boolean | ❌ | Status aktif |\n| items | array | ❌ | Jika dikirim, min 1 item |\n| items[].product_id | integer | ✅ jika items ada | ID produk parent/produk single |\n| items[].variant_id | integer | ❌ | ID varian; jika diisi maka stok varian yang dipakai |\n| items[].quantity | integer | ✅ jika items ada | Jumlah (≥ 1) |"
+            "description": "Update bundle. Jika `items` dikirim, seluruh item akan diganti.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sku | string | ❌ | Kode bundle unik |\n| name | string | ❌ | Nama bundle |\n| description | string | ❌ | Deskripsi |\n| sell_price | numeric | ❌ | Harga jual |\n| is_active | boolean | ❌ | Status aktif |\n| items | array | ❌ | Jika dikirim, min 1 item |\n| items[].product_id | integer | ✅ jika items ada | ID produk parent atau produk single |\n| items[].variant_id | integer | ✅* | ID varian; **wajib** jika `product_id` bertipe `parent`; stok varian yang dipakai |\n| items[].quantity | integer | ✅ jika items ada | Jumlah (≥ 1) |"
           },
           "response": []
         },
@@ -3069,7 +3075,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"sale_date\": \"2026-04-18\",\n  \"payment_method\": \"cash\",\n  \"status\": \"completed\",\n  \"paid_amount\": 20000,\n  \"discount_amount\": 0,\n  \"tax_amount\": 0,\n  \"notes\": \"Transaksi kasir siang\",\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 3,\n      \"sell_price\": 3500,\n      \"discount\": 0\n    },\n    {\n      \"product_id\": 2,\n      \"quantity\": 1,\n      \"sell_price\": 8000,\n      \"discount\": 500\n    }\n  ]\n}",
+              "raw": "{\n  \"sale_date\": \"2026-04-27\",\n  \"payment_method\": \"cash\",\n  \"status\": \"completed\",\n  \"paid_amount\": 50000,\n  \"discount_amount\": 0,\n  \"tax_amount\": 0,\n  \"notes\": \"Transaksi kasir siang\",\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 2,\n      \"sell_price\": 3500,\n      \"discount\": 0\n    },\n    {\n      \"product_id\": 3,\n      \"variant_id\": 11,\n      \"quantity\": 1,\n      \"sell_price\": 9000,\n      \"discount\": 0\n    },\n    {\n      \"bundle_id\": 2,\n      \"quantity\": 1,\n      \"sell_price\": 15000,\n      \"discount\": 0\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3087,7 +3093,7 @@
                 "sales"
               ]
             },
-            "description": "Membuat transaksi penjualan baru. Nomor invoice, total, dan kembalian dihitung otomatis.\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sale_date | date | ✅ | Tanggal penjualan (YYYY-MM-DD) |\n| paid_amount | numeric | ✅ | Jumlah uang yang dibayar (≥ 0) |\n| discount_amount | numeric | ❌ | Total diskon transaksi (≥ 0) |\n| tax_amount | numeric | ❌ | Total pajak (≥ 0) |\n| payment_method | string | ❌ | `cash`, `card`, `transfer` |\n| status | string | ❌ | `draft`, `completed`, `cancelled` |\n| notes | string | ❌ | Catatan |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅ | ID produk |\n| items[].quantity | integer | ✅ | Jumlah (≥ 1) |\n| items[].sell_price | numeric | ✅ | Harga jual (≥ 0) |\n| items[].discount | numeric | ❌ | Diskon per item (≥ 0) |"
+            "description": "Membuat transaksi penjualan baru. Nomor invoice, total, dan kembalian dihitung otomatis.\n\nSetiap item dapat berupa:\n- **Produk biasa** — gunakan `product_id` saja\n- **Produk dengan varian** — gunakan `product_id` + `variant_id`; stok yang dikurangi adalah stok varian\n- **Bundle** — gunakan `bundle_id` (tanpa `product_id`); stok setiap komponen bundle akan dikurangi\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| sale_date | date | ✅ | Tanggal penjualan (YYYY-MM-DD) |\n| paid_amount | numeric | ✅ | Jumlah uang yang dibayar (≥ 0) |\n| discount_amount | numeric | ❌ | Total diskon transaksi (≥ 0) |\n| tax_amount | numeric | ❌ | Total pajak (≥ 0) |\n| payment_method | string | ❌ | `cash`, `card`, `transfer` |\n| status | string | ❌ | `draft`, `completed`, `cancelled` |\n| notes | string | ❌ | Catatan |\n| items | array | ✅ | Min 1 item |\n| items[].product_id | integer | ✅* | ID produk (*wajib jika tidak pakai `bundle_id`) |\n| items[].variant_id | integer | ❌ | ID varian produk; jika diisi, stok varian yang dikurangi |\n| items[].bundle_id | integer | ✅* | ID bundle (*sebagai pengganti `product_id` untuk bundle) |\n| items[].quantity | integer | ✅ | Jumlah (≥ 1) |\n| items[].sell_price | numeric | ✅ | Harga jual (≥ 0) |\n| items[].discount | numeric | ❌ | Diskon per item (≥ 0) |"
           },
           "response": []
         },
