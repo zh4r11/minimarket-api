@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $purchase_id
  * @property int $product_id
+ * @property int|null $variant_id
  * @property int $quantity
  * @property string $buy_price
  * @property string $subtotal
@@ -26,7 +27,7 @@ final class PurchaseItem extends Model
     use HasFactory;
 
     /** @var list<string> */
-    protected $fillable = ['purchase_id', 'product_id', 'quantity', 'buy_price', 'subtotal'];
+    protected $fillable = ['purchase_id', 'product_id', 'variant_id', 'quantity', 'buy_price', 'subtotal'];
 
     protected function casts(): array
     {

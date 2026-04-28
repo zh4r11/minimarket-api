@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $product_id
+ * @property int|null $variant_id
  * @property string $type
  * @property string|null $reference_type
  * @property int|null $reference_id
@@ -32,6 +33,7 @@ final class StockMovement extends Model
     /** @var list<string> */
     protected $fillable = [
         'product_id',
+        'variant_id',
         'type',
         'reference_type',
         'reference_id',
