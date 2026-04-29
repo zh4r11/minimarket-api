@@ -87,6 +87,8 @@ Route::middleware(['auth:sanctum', 'throttle:authenticated'])->group(function ()
         'update' => 'api.v1.products.update',
         'destroy' => 'api.v1.products.destroy',
     ]);
+    Route::get('products/{product}/stock-movements', [ProductController::class, 'stockMovements'])->name('api.v1.products.stock-movements');
+    Route::get('products/{product}/stock-card', [ProductController::class, 'stockCard'])->name('api.v1.products.stock-card');
     Route::post('products/{product}/photos', [ProductPhotoController::class, 'store'])->name('api.v1.products.photos.store');
     Route::delete('products/{product}/photos/{photo}', [ProductPhotoController::class, 'destroy'])->name('api.v1.products.photos.destroy');
     Route::patch('products/{product}/photos/{photo}/main', [ProductPhotoController::class, 'setMain'])->name('api.v1.products.photos.set-main');

@@ -3425,7 +3425,31 @@
                 {
                   "key": "status",
                   "value": "",
-                  "description": "Filter status stok: `low` (di bawah minimum), `empty` (habis)",
+                  "description": "Filter status stok: `low` (di bawah minimum), `empty` (habis), `over` (di atas 2x minimum)",
+                  "disabled": true
+                },
+                {
+                  "key": "start_date",
+                  "value": "",
+                  "description": "Filter stok movement dari tanggal ini (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "",
+                  "description": "Filter stok movement sampai tanggal ini (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "description": "Filter tipe produk: `simple`, `variant`, `bundle`",
+                  "disabled": true
+                },
+                {
+                  "key": "include_variants",
+                  "value": "false",
+                  "description": "Sertakan produk varian dalam laporan: `true` atau `false`",
                   "disabled": true
                 },
                 {
@@ -3440,7 +3464,121 @@
                 }
               ]
             },
-            "description": "Mengembalikan laporan stok semua produk dengan informasi total stok masuk, stok keluar, stok saat ini, dan status stok.\n\n| Query Param | Tipe | Keterangan |\n|-------------|------|------------|\n| search | string | Cari nama/SKU produk |\n| category_id | integer | Filter berdasarkan kategori |\n| status | string | `low` = stok di bawah minimum, `empty` = stok habis |"
+            "description": "Mengembalikan laporan stok semua produk dengan informasi total stok masuk, stok keluar, adjustment, nilai stok, dan status stok.\n\n| Query Param | Tipe | Keterangan |\n|-------------|------|------------|\n| search | string | Cari nama/SKU produk |\n| category_id | integer | Filter berdasarkan kategori |\n| type | string | Filter tipe produk: `simple`, `variant`, `bundle` |\n| status | string | `low` = di bawah minimum, `empty` = habis, `over` = di atas 2x minimum |\n| start_date | string | Filter stok movement dari tanggal (YYYY-MM-DD) |\n| end_date | string | Filter stok movement sampai tanggal (YYYY-MM-DD) |\n| include_variants | boolean | Sertakan varian: `true` atau `false` (default false) |\n\n**Response:**\n- `stock_in`: Total stok masuk (termasuk adjustment positif dan data lama `purchase`)\n- `stock_out`: Total stok keluar (termasuk adjustment negatif dan data lama `sale`)\n- `stock_adjustment`: Total adjustment stok\n- `net_change`: Perubahan bersih (stock_in - stock_out)\n- `status`: `empty`, `low`, `normal`, atau `over`\n- `stock_value`: Nilai stok (current_stock × buy_price)"
+          },
+          "response": []
+        },
+        {
+          "name": "Riwayat Pergerakan Stok (Stock Movements)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/products/:id/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                ":id",
+                "stock-movements"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID produk"
+                }
+              ],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "",
+                  "description": "Filter dari tanggal ini (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "",
+                  "description": "Filter sampai tanggal ini (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "types",
+                  "value": "",
+                  "description": "Filter tipe movement (comma-separated): `in,out,adjustment,initial,purchase,sale`",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "50",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Mengembalikan riwayat lengkap pergerakan stok untuk produk tertentu dengan summary.\n\n| Query Param | Tipe | Keterangan |\n|-------------|------|------------|\n| start_date | string | Filter dari tanggal (YYYY-MM-DD) |\n| end_date | string | Filter sampai tanggal (YYYY-MM-DD) |\n| types | string | Filter tipe movement (comma-separated) |\n| per_page | integer | Jumlah per halaman (max 200) |\n\n**Response:**\n- `summary.total_in`: Total stok masuk\n- `summary.total_out`: Total stok keluar\n- `summary.adjustment_in`: Total adjustment positif\n- `summary.adjustment_out`: Total adjustment negatif\n- `summary.net_change`: Perubahan bersih\n- `summary.total_movements`: Total jumlah movement\n- `movements.data`: Array of stock movements\n- `movements.meta`: Pagination info\n\n**Reference Text:**\n- `INV-XXX` untuk Purchase\n- `SALE-XXX` untuk Sale\n- `BUNDLE-XXX` untuk Bundle\n- `INITIAL` untuk stok awal\n- `MANUAL` untuk manual adjustment"
+          },
+          "response": []
+        },
+        {
+          "name": "Kartu Stok (Stock Card)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/products/:id/stock-card",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                ":id",
+                "stock-card"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID produk"
+                }
+              ],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "",
+                  "description": "Filter dari tanggal ini (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "",
+                  "description": "Filter sampai tanggal ini (YYYY-MM-DD)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Mengembalikan kartu stok (ledger) lengkap dengan running balance untuk audit dan rekonsiliasi.\n\n| Query Param | Tipe | Keterangan |\n|-------------|------|------------|\n| start_date | string | Filter dari tanggal (YYYY-MM-DD) - akan menampilkan saldo awal |\n| end_date | string | Filter sampai tanggal (YYYY-MM-DD) |\n\n**Response:**\n- `summary.beginning_balance`: Saldo awal (jika ada filter start_date)\n- `summary.ending_balance`: Saldo akhir\n- `entries.data`: Array of stock card entries\n- `entries.data[].ref`: Referensi transaksi (INV-XXX, SALE-XXX, dll)\n- `entries.data[].quantity_in`: Jumlah masuk\n- `entries.data[].quantity_out`: Jumlah keluar\n- `entries.data[].balance`: Saldo berjalan\n\n**Format:**\nJika `start_date` diset, akan ada entry \"SALDO AWAL\" yang menunjukkan saldo sebelum tanggal tersebut."
           },
           "response": []
         }
