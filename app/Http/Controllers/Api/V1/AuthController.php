@@ -36,6 +36,7 @@ final class AuthController extends ApiController
         return $this->created([
             'user' => new UserResource($result['user']),
             'token' => $result['token'],
+            'expires_at' => $result['expires_at'],
         ], 'User registered successfully. Please check your email to verify your account.');
     }
 
@@ -56,6 +57,7 @@ final class AuthController extends ApiController
         return $this->success([
             'user' => new UserResource($result['user']),
             'token' => $result['token'],
+            'expires_at' => $result['expires_at'],
         ], 'Login successful');
     }
 
@@ -76,11 +78,18 @@ final class AuthController extends ApiController
     /**
      * Get authenticated user.
      *
-     * Returns the currently authenticated user's profile data.
+     * Returns the currently authenticated user's profile data along with token expiration.
      */
     public function me(Request $request): JsonResponse
     {
-        return $this->success(new UserResource($request->user()));
+        /** @var User $user */
+        $user = $request->user();
+        $currentToken = $user->currentAccessToken();
+
+        return $this->success([
+            'user' => new UserResource($user),
+            'token_expires_at' => $currentToken?->expires_at?->toIso8601String(),
+        ]);
     }
 
     /**

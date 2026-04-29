@@ -19,7 +19,7 @@ final class AuthService
 
     /**
      * @param  array<string, mixed>  $data
-     * @return array{user: User, token: string}
+     * @return array{user: User, token: string, expires_at: string}
      */
     public function register(array $data): array
     {
@@ -32,14 +32,15 @@ final class AuthService
 
         $user->sendEmailVerificationNotification();
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = $user->createToken('auth-token', ['*'], now()->addDay());
+        $expiresAt = $token->accessToken->expires_at->toIso8601String();
 
-        return ['user' => $user, 'token' => $token];
+        return ['user' => $user, 'token' => $token->plainTextToken, 'expires_at' => $expiresAt];
     }
 
     /**
      * @param  array<string, mixed>  $credentials
-     * @return array{user: User, token: string}|null
+     * @return array{user: User, token: string, expires_at: string}|null
      */
     public function login(array $credentials): ?array
     {
@@ -49,9 +50,10 @@ final class AuthService
             return null;
         }
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = $user->createToken('auth-token', ['*'], now()->addDay());
+        $expiresAt = $token->accessToken->expires_at->toIso8601String();
 
-        return ['user' => $user, 'token' => $token];
+        return ['user' => $user, 'token' => $token->plainTextToken, 'expires_at' => $expiresAt];
     }
 
     public function logout(User $user): void

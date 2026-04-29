@@ -73,7 +73,7 @@
                 "register"
               ]
             },
-            "description": "Mendaftarkan user baru. Email verifikasi akan dikirim setelah registrasi berhasil.\n\n**Rate limit:** 5 request/menit per IP (brute-force protection)\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 255 karakter |\n| email | string | ✅ | Format email, unik |\n| password | string | ✅ | Min 8 karakter |\n| password_confirmation | string | ✅ | Harus sama dengan password |"
+            "description": "Mendaftarkan user baru. Email verifikasi akan dikirim setelah registrasi berhasil.\n\n**Rate limit:** 5 request/menit per IP (brute-force protection)\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| name | string | ✅ | Maks 255 karakter |\n| email | string | ✅ | Format email, unik |\n| password | string | ✅ | Min 8 karakter |\n| password_confirmation | string | ✅ | Harus sama dengan password |\n\n**Response:**\n```json\n{\n  \"success\": true,\n  \"message\": \"User registered successfully. Please check your email to verify your account.\",\n  \"data\": {\n    \"user\": { \"id\": 1, \"name\": \"John Doe\", \"email\": \"john@example.com\" },\n    \"token\": \"1|abc123...\",\n    \"expires_at\": \"2026-04-30T12:34:56.000000Z\"\n  }\n}\```\n\n**Token akan expired dalam 24 jam.**"
           },
           "response": []
         },
@@ -88,6 +88,10 @@
                   "if (res.data && res.data.token) {",
                   "    pm.collectionVariables.set('token', res.data.token);",
                   "    console.log('Token tersimpan:', res.data.token);",
+                  "    if (res.data.expires_at) {",
+                  "        pm.collectionVariables.set('token_expires_at', res.data.expires_at);",
+                  "        console.log('Token expires at:', res.data.expires_at);",
+                  "    }",
                   "} else {",
                   "    console.log('Token tidak ditemukan di response');",
                   "}"
@@ -133,7 +137,7 @@
                 "login"
               ]
             },
-            "description": "Login dengan email dan password. Token Sanctum akan otomatis disimpan ke collection variable `token`.\n\n**Rate limit:** 5 request/menit per IP\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| email | string | ✅ | Format email |\n| password | string | ✅ | Password akun |"
+            "description": "Login dengan email dan password. Token Sanctum akan otomatis disimpan ke collection variable `token`.\n\n**Rate limit:** 5 request/menit per IP\n\n| Field | Tipe | Wajib | Keterangan |\n|-------|------|-------|------------|\n| email | string | ✅ | Format email |\n| password | string | ✅ | Password akun |\n\n**Response:**\n```json\n{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"user\": { \"id\": 1, \"name\": \"John Doe\", \"email\": \"john@example.com\" },\n    \"token\": \"1|abc123...\",\n    \"expires_at\": \"2026-04-30T12:34:56.000000Z\"\n  }\n}\```\n\n**Token akan expired dalam 24 jam.**"
           },
           "response": []
         },
@@ -197,7 +201,7 @@
                 "me"
               ]
             },
-            "description": "Mengembalikan data profil user yang sedang login beserta roles-nya."
+            "description": "Mengembalikan data profil user yang sedang login beserta roles-nya dan informasi kedaluwarsa token.\n\n**Response:**\n```json\n{\n  \"success\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\",\n      \"roles\": [\"admin\"]\n    },\n    \"token_expires_at\": \"2026-04-30T12:34:56.000000Z\"\n  }\n}\```\n\n**Gunakan `token_expires_at` untuk menangani refresh token atau menampilkan peringatan sebelum token expired.**"
           },
           "response": []
         },
